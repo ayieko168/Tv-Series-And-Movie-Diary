@@ -1,122 +1,119 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
+""""""
 
-try:
-    import Tkinter as tk
-except ImportError:
-    import tkinter as tk
-from itertools import cycle
+import tkinter as tk
+from tkinter import ttk
+import os
 
-def multiple(*func_list):
-    '''run multiple functions as one'''
-    # I can't decide if this is ugly or pretty
-    return lambda *args, **kw: [func(*args, **kw) for func in func_list]; None
+# link
 
-def scroll_to_view(scroll_set, *view_funcs):
-    ''' Allows one widget to control the scroll bar and other widgets
-    scroll set: the scrollbar set function
-    view_funcs: other widget's view functions
-    '''
-    def closure(start, end):
-        scroll_set(start, end)
-        for func in view_funcs:
-            func('moveto', start)
-    return closure
+__title__ = "FileNavigator"
+__version__ = "1.4.0"
+__author__ = "DeflatedPickle"
 
-class MultiListbox(tk.Frame):
-    def __init__(self, master=None, columns=2, data=[], row_select=True, **kwargs):
-        '''makes a multicolumn listbox by combining a bunch of single listboxes
-        with a single scrollbar
-        :columns:
-          (int) the number of columns
-          OR (1D list or strings) the column headers
-        :data:
-          (1D iterable) auto add some data
-        :row_select:
-          (boolean) When True, clicking a cell selects the entire row
-        All other kwargs are passed to the Listboxes'''
-        tk.Frame.__init__(self, master, borderwidth=1, highlightthickness=1, relief=tk.SUNKEN)
-        self.rowconfigure(1, weight=1)
-        self.columns = columns
-        if isinstance(self.columns, (list, tuple)):
-            for col, text in enumerate(self.columns):
-                tk.Label(self, text=text).grid(row=0, column=col)
-            self.columns = len(self.columns)
 
-        self.boxes = []
-        for col in range(self.columns):
-            box = tk.Listbox(self, exportselection=not row_select, **kwargs)
-            if row_select:
-                box.bind('<<ListboxSelect>>', self.selected)
-            box.grid(row=1, column=col, sticky='nsew')
-            self.columnconfigure(col, weight=1)
-            self.boxes.append(box)
-        vsb = tk.Scrollbar(self, orient=tk.VERTICAL,
-            command=multiple(*[box.yview for box in self.boxes]))
-        vsb.grid(row=1, column=col+1, sticky='ns')
-        for box in self.boxes:
-            box.config(yscrollcommand=scroll_to_view(vsb.set,
-                *[b.yview for b in self.boxes if b is not box]))
-        self.add_data(data)
+class FileNavigator(ttk.Frame):
+    """
+            -----DESCRIPTION-----
+    A Treeview that shows all contents of a directory.
+            -----USAGE-----
+    filenavigator = FileNavigator(parent, directory=[string])
+    filenavigator.pack()
+            -----PARAMETERS-----
+    parent         = The parent of the widget.
+    directory      = The directory to show.
+            -----CONTENTS-----
+    ---VARIABLES---
+    parent         = The parent of the widget.
+    _directory     = The directory to show.
+    images         = A dictionary of images to use.
+    selected       = The selected item in the Treeview.
+    ---TKINTER VARIABLES---
+    None
+    ---WIDGETS---
+    self
+    _tree          = The Treeview widget.
+    ---FUNCTIONS---
+    _select()      = Sets the selected item
+    _open_event()  =
+    _close_event() =
+    refresh()      = Refreshes the Treeview.
+    """
+    def __init__(self, parent, directory, *args):
+        ttk.Frame.__init__(self, parent, *args)
+        self.parent = parent
+        self._directory = directory
 
-    def selected(self, event=None):
-        row = event.widget.curselection()[0]
-        for lbox in self.boxes:
-            lbox.select_clear(0, tk.END)
-            lbox.select_set(row)
+        self.images = {"Directory": tk.PhotoImage(),
+                       "File": tk.PhotoImage()}
 
-    def add_data(self, data=[]):
-        '''takes a 1D list of data and adds it row-wise
-        If there is not enough data to fill the row, then the row is
-        filled with empty strings
-        these will not be back filled; every new call starts at column 0'''
-        # it is essential that the listboxes all have the same length.
-        # because the scroll works on "percent" ...
-        # and 100% must mean the same in all cases
-        boxes = cycle(self.boxes)
-        idx = -1
-        for idx, (item, box) in enumerate(zip(data, boxes)):
-            box.insert(tk.END, item)
-        for _ in range(self.columns - idx%self.columns - 1):
-            next(boxes).insert(tk.END, '')
-          
-    def __getitem__(self, index):
-        '''get a row'''
-        return [box.get(index) for box in self.boxes]
+        self.selected = None
 
-    def __delitem__(self, index):
-        '''delete a row'''
-        [box.delete(index) for box in self.boxes]
+        self._tree = ttk.Treeview(self, show="tree")
+        self._tree.pack(fill="both", expand=True)
 
-    def curselection(self):
-        '''get the currently selected row'''
-        selection = self.boxes[0].curselection()
-        return selection[0] if selection else None
-        
-class GUI(tk.Frame):
-    '''an example gui'''
-    def __init__(self, master=None, **kwargs):
-        tk.Frame.__init__(self, master, **kwargs)
+        self._tree.bind("<<TreeviewSelect>>", self._select, "+")
+        # self._tree.bind("<Double-Button-1>", self._open_event)
+        self._tree.bind("<<TreeviewOpen>>", self._open_event, "+")
+        self._tree.bind("<<TreeviewClose>>", self._close_event, "+")
 
-        # you can add initial data in the constructor or use the `add_data` method
-        # you can use an integer so specify the number of columns
-        b = MultiListbox(self, 8, width=4, data=range(20), highlightthickness=0, border=0)
-        b.add_data(range(195))
-        b.pack(fill=tk.BOTH, expand=True)
+        self.refresh()
 
-        # or you can provide a list of column headers,
-        # which will be added to the tops of the columns
-        b = MultiListbox(self, ['col 1', 'num 2', 'thing 3'], width=4)
-        b.add_data(range(500))
-        b.pack(fill=tk.BOTH, expand=True)
+    def _select(self, event=None):
+        self.selected = self._tree.item(self._tree.focus())
 
-def main():
+    def _open_event(self, event=None):
+        self._select()
+        self.event_generate("<<{}Open>>".format(self._tree.item(self._tree.focus())["tags"][0]))
+
+    def _close_event(self, event=None):
+        self._select()
+        self.event_generate("<<{}Close>>".format(self._tree.item(self._tree.focus())["tags"][0]))
+
+    def refresh(self):
+        self._tree.delete(*self._tree.get_children())
+
+        self._tree.insert(parent="",
+                          index="end",
+                          iid=self._directory,
+                          text=self._directory,
+                          image=self.images["Directory"],
+                          tags=("Directory", "root", self._directory))
+
+        for root, directories, files in os.walk(self._directory, topdown=True):
+            # print("Root: {}".format(root))
+
+            for name in directories:
+                # print("Directory: {}".format(name))
+
+                self._tree.insert(parent=root,
+                                  index="end",
+                                  iid=os.path.join(root, name),
+                                  text=name,
+                                  image=self.images["Directory"],
+                                  tags=("Directory", "\\", os.path.join(root, name)))
+
+            for name in files:
+                # print("File: {}".format(name))
+                extension = os.path.splitext(name)[1]
+
+                self._tree.insert(parent=root,
+                                  index="end",
+                                  iid=os.path.join(root, name),
+                                  text=name,
+                                  image=self.images.get(extension) if self.images.get(extension) else self.images["File"],
+                                  tags=("File", extension, os.path.join(root, name)))
+
+##################################################
+
+if __name__ == "__main__":
     root = tk.Tk()
-    win = GUI(root)
-    win.pack(fill=tk.BOTH, expand=True)
-    root.mainloop()
+    fnavigator = FileNavigator(root, "..\\")
+    fnavigator.pack(fill="y", expand=True, padx=5, pady=5)
 
-if __name__ == '__main__':
-    main()
-
+    fnavigator.bind("<<DirectoryOpen>>", lambda event: print("Opened:", fnavigator.selected["tags"][2]))
+    fnavigator.bind("<<FileOpen>>", lambda event: print("Opened:", fnavigator.selected["tags"][2]))
+    fnavigator.bind("<<DirectoryClose>>", lambda event: print("Closed:", fnavigator.selected["tags"][2]))
+    fnavigator.bind("<<FileClose>>", lambda event: print("Closed:", fnavigator.selected["tags"][2]))
+root.mainloop()

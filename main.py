@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import ttk
 import os
 import movies
 
@@ -14,15 +15,22 @@ def main():
     # Tkinter Functions
     def list_movies():
 
-        movie_list.insert(END, " # | Name  |    Season  |   Episode  ")
-        movie_list.insert(END, "=====================================")
+        for k, v in movies.series_dict.items():
+            treeview.insert('', END, '#{}'.format(k), text=k)
+            treeview.set('#{}'.format(k), 'sn', v[0])
+            treeview.set('#{}'.format(k), 'ep', v[1])
 
-        for name, val in movies.series_dict.items():
-            movie_list.insert(END, name)
-            x = movie_list.index
-            print(x)
-            print(name)
-            print(val)
+
+    def tree_configure():
+
+        treeview.config(columns=('sn', 'ep'))
+        treeview.column('#0', width=150, anchor=CENTER)
+        treeview.column('sn', width=60, anchor=CENTER)
+        treeview.column('ep', width=60, anchor=CENTER)
+
+        treeview.heading('#0', text='Name')
+        treeview.heading('sn', text='Season')
+        treeview.heading('ep', text='Episode')
 
     mainWindow = Tk()
 
@@ -30,15 +38,15 @@ def main():
 
     # Widgets
 
-    movie_list = Listbox(mainWindow, bg='white', bd=3, relief=SUNKEN, width=30)
+    treeview = ttk.Treeview(mainWindow)
+    tree_configure()
     list_movies()
-
     preview_box = Text(mainWindow, width=17, height=20)
 
     # Packing Widgets
 
-    movie_list.pack(side=RIGHT, fill=Y, anchor=SW, padx=10, pady=30)
-    preview_box.pack(side=LEFT, padx=10, pady=20)
+    preview_box.pack(side=LEFT, padx=10, pady=20, anchor=S)
+    treeview.pack(side=RIGHT, fill=Y)
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")

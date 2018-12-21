@@ -3,3 +3,6 @@ series_dict = {' The big bang thory': [2, 10],
                ' Game of thrones ': [7, 6],
                ' Breaking Bad ': [5, 1]
                }
+
+moviies_dict = {''
+                }
