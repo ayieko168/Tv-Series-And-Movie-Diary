@@ -4,7 +4,7 @@ import os
 import movies
 
 
-width = 450
+width = 550
 height = 650
 
 
@@ -32,24 +32,53 @@ def main():
         treeview.heading('sn', text='Season')
         treeview.heading('ep', text='Episode')
 
+    def selectItem(a):
+        curItem = treeview.focus()
+        select_values = movies.series_dict[curItem.strip('#')]
+        #print(treeview.item(curItem))  main
+
+        image = PhotoImage(file=select_values[2]).subsample(50, 50)
+       #preview_box.image_create(END, image=image)
+        preview_box.window_create(END, window=Label(preview_box, image=image))
+
     mainWindow = Tk()
 
     # Tkinter variables
+    searchentvar = StringVar()
+    searchentvar.set('Search')
+    searchimage = PhotoImage(file='search.png').subsample(90, 100)
 
     # Widgets
 
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies()
-    preview_box = Text(mainWindow, width=17, height=20)
+    treeview.bind('<ButtonRelease-1>', selectItem)
+
+    previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
+    preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
+                       bd=3)
+
+    searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11')
+    searchbut = Button(mainWindow, image=searchimage)
+
+    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold')
+
 
     # Packing Widgets
 
-    preview_box.pack(side=LEFT, padx=10, pady=20, anchor=S)
+    previewlb.pack(side=LEFT, anchor=S, pady=20, padx=2)
+    preview_box.pack(side=LEFT, padx=5, pady=5, anchor=S)
     treeview.pack(side=RIGHT, fill=Y)
+
+    searchent.place(x=10, y=40)
+    searchbut.place(x=242, y=40)
+
+    addbut.place(x=65, y=115)
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")
+    mainWindow.resizable(FALSE, FALSE)
     mainWindow.mainloop()
 
 
