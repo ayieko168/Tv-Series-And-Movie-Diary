@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 import os
 import movies
+import imageProcessor
 
 
 width = 550
@@ -20,7 +21,6 @@ def main():
             treeview.set('#{}'.format(k), 'sn', v[0])
             treeview.set('#{}'.format(k), 'ep', v[1])
 
-
     def tree_configure():
 
         treeview.config(columns=('sn', 'ep'))
@@ -32,35 +32,49 @@ def main():
         treeview.heading('sn', text='Season')
         treeview.heading('ep', text='Episode')
 
-    def selectItem(a):
+    def selectitem(a):
         curItem = treeview.focus()
-        select_values = movies.series_dict[curItem.strip('#')]
-        #print(treeview.item(curItem))  main
+        preview_box.window_create(index=1.0, window=Label(preview_box, text=''))  # clear the preview box
 
-        image = PhotoImage(file=select_values[2]).subsample(50, 50)
-       #preview_box.image_create(END, image=image)
-        preview_box.window_create(END, window=Label(preview_box, image=image))
+        try:
+            select_values = movies.series_dict[curItem]
+        except KeyError:
+            select_values = movies.series_dict[curItem.strip('#')]
+        except Exception as e:
+            print("ERROR {} ".format(e))
+
+        # print(treeview.item(curItem))
+
+        try:
+            img = imageProcessor.convert_format(select_values[2])
+            img = imageProcessor.resize_image(img)
+            image = PhotoImage(file=img)
+            Label.image = image
+            preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+        except AttributeError:
+            preview_box.delete(0.1, END)
+            preview_box.window_create(index=1.0, window=Label(preview_box, text='No Preview '))
 
     mainWindow = Tk()
 
     # Tkinter variables
     searchentvar = StringVar()
     searchentvar.set('Search')
-    searchimage = PhotoImage(file='search.png').subsample(90, 100)
+    searchimage = PhotoImage(file='search_ico.gif').subsample(15, 15)
 
     # Widgets
 
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies()
-    treeview.bind('<ButtonRelease-1>', selectItem)
+    treeview.bind('<Double-Button-1>', selectitem)
 
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
                        bd=3)
 
     searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11')
-    searchbut = Button(mainWindow, image=searchimage)
+    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3)
 
     addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold')
 
@@ -82,4 +96,5 @@ def main():
     mainWindow.mainloop()
 
 
-main()
+if __name__ == '__main__':
+    main()
