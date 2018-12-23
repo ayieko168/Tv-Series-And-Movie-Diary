@@ -1,12 +1,11 @@
 
-
 from tkinter import *
-from time import sleep
 from tkinter import ttk
+
 
 def login_UI():
 
-    login_window = Tk()
+    login_window = Toplevel()
 
     # bind functions
     
@@ -71,5 +70,3 @@ def login_UI():
     login_window.geometry('400x200')
 
 
-
-login_UI()

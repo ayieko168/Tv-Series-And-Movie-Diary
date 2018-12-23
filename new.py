@@ -1,17 +1,14 @@
-import tkinter as tk
+import json
 
-def add_image():
-    text.image_create(tk.END, image = img) # Example 1
-    text.window_create(tk.END, window = tk.Label(text, image = img)) # Example 2
+with open('new.json') as f:
+    data = json.load(f)
 
-root = tk.Tk()
+movie_dict = data
 
-text = tk.Text(root)
-text.pack(padx = 20, pady = 20)
+movie_dict["Young Sheldon"] = [3, 12, "young-sheldon.jpg"]
 
-tk.Button(root, text = "Insert", command = add_image).pack()
+with open('new.json', 'w') as f:
+    new_data = json.dump(data, f, indent=2)
+    print(new_data)
 
-img = tk.PhotoImage(file = "search.png")
-
-root.mainloop()
 

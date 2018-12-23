@@ -1,9 +1,13 @@
 from PIL import Image
+import movies
 
+def delete_file(file):
+
+    print(file)
 
 def convert_format(image_file):
 
-    imge_format = 'GIF'.lower()
+    imge_format = 'GIF'.lower()  # GIF
     try:
         image_file_new = '{}.{}'.format(image_file.split('.')[0], imge_format)
     except AttributeError:
@@ -16,6 +20,7 @@ def convert_format(image_file):
     # print(im1.format)
 
     return image_file_new
+
 
     # The file format of the source file.
     # print(im.format)

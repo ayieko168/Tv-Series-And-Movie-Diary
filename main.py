@@ -1,22 +1,26 @@
 from tkinter import *
 from tkinter import ttk
-import os
-import movies
+from tkinter import messagebox
+import json
 import imageProcessor
-
 
 width = 550
 height = 650
 
+with open('series_table.json') as f:
+    data = json.load(f,)
+
+series_dict = data
+
 
 def main():
 
-    # main tkinter window
+        # main tkinter window
 
     # Tkinter Functions
     def list_movies():
 
-        for k, v in movies.series_dict.items():
+        for k, v in sorted(series_dict.items()):
             treeview.insert('', END, '#{}'.format(k), text=k)
             treeview.set('#{}'.format(k), 'sn', v[0])
             treeview.set('#{}'.format(k), 'ep', v[1])
@@ -34,33 +38,37 @@ def main():
 
     def selectitem(a):
         curItem = treeview.focus()
-        preview_box.window_create(index=1.0, window=Label(preview_box, text=''))  # clear the preview box
+        preview_box.window_create(index=1.0, window=Label(preview_box, text='', bg="white"))  # clear the preview box
 
         try:
-            select_values = movies.series_dict[curItem]
+            select_values = series_dict[curItem]
         except KeyError:
-            select_values = movies.series_dict[curItem.strip('#')]
-        except Exception as e:
-            print("ERROR {} ".format(e))
+            try:
+                select_values = series_dict[curItem.strip('#').strip()]
+            except KeyError:
+                messagebox.showinfo('INFO...', ' TRY AND SELECT A VALID OPTION ')
 
         # print(treeview.item(curItem))
 
         try:
-            img = imageProcessor.convert_format(select_values[2])
-            img = imageProcessor.resize_image(img)
-            image = PhotoImage(file=img)
-            Label.image = image
-            preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-        except AttributeError:
-            preview_box.delete(0.1, END)
-            preview_box.window_create(index=1.0, window=Label(preview_box, text='No Preview '))
+            try:
+                img = imageProcessor.convert_format(select_values[2])
+                img = imageProcessor.resize_image(img)
+                image = PhotoImage(file=img)
+                Label.image = image
+                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+            except AttributeError:
+                preview_box.delete(0.1, END)
+                preview_box.window_create(index=1.0, window=Label(preview_box, text='No Preview '))
+        except Exception:
+            pass
 
     mainWindow = Tk()
 
     # Tkinter variables
     searchentvar = StringVar()
     searchentvar.set('Search')
-    searchimage = PhotoImage(file='search_ico.gif').subsample(15, 15)
+    searchimage = PhotoImage(file='thumbnails/search_ico.gif').subsample(15, 15)
 
     # Widgets
 
