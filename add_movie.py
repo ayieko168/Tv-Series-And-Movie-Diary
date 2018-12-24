@@ -1,34 +1,70 @@
 from tkinter import *
 from tkinter import filedialog
+from tkinter import messagebox
 import os
 import json
+import main
+
+
+pat = 'thumbnails/'
+
 
 def add_ui():
 
     def add():
+        """ callback function called when add button is clicked """
 
-        movie_title = movie_titleent.get()
-        season = seasoncom.get()
-        episode = episodecom.get()
-        pic = add_picent.get()
+        movie_title = str(movie_titleent.get()).title()
+        season = int(seasoncom.get())
+        episode = int(episodecom.get())
+        pic = str(add_picent.get())
 
         print('movie_title = ', movie_title)
         print('season : ', season)
         print('episode : ', episode)
         print('pic : ', pic)
 
-        # add_window.destroy()
+        if (len(movie_title) != 0) and (len(str(episode)) != 0) and (len(str(season)) != 0):
+            """check if all the important info is given"""
+
+            with open('series_table.json', 'r') as f:  # get the current list of data from the series json file
+                series_dict = json.load(f)
+
+            if movie_title in series_dict:
+                '''check if the added title is in the database'''
+                choise = messagebox.askquestion('QUESTION', 'The title {} already exists in your list,\nDo you want to update it instead'.format(movie_title.upper()))
+                print(choise)
+                if choise == 'yes':
+                    print('updating')
+                    series_dict[movie_title] = [season, episode, pat+pic]  # add the users entry
+                    messagebox.showinfo('RE RUN NEEDED',
+                                        'IN ORDER FOR THE NEW ENTRY TO BE \n'
+                                        'UPDATED YOU NEED TO RESTART THE APP ')
+                else:
+                    print('skipping')
+                    pass
+            else:
+                series_dict[movie_title] = [season, episode, pat + pic]  # add the users entry
+                messagebox.showinfo('RE RUN NEEDED',
+                                    'IN ORDER FOR THE NEW ENTRY TO BE \n'
+                                    'UPDATED YOU NEED TO RESTART THE APP ')
+
+            with open('series_table.json', 'w') as f:  # append the entry to the json file
+                json.dump(series_dict, f, indent=4)
+
+        add_window.destroy()
 
     def browse_pics():
+        """ clallback function called when brouswe button is clicked """
 
         pic_path = filedialog.askopenfilename(filetypes=(("GIF files", "*.gif"), ("JPEG files", "*.jpg;*.jpeg"), ("All files", "*.*")))
 
         pic_name = os.path.split(pic_path)[-1]
 
-        print(pic_name)
+        add_picent.delete(0, END)  # clear entry and insert the selected picture
+        add_picent.insert(0, pic_name)
 
-
-    add_window = Tk()  # cange to top view
+    add_window = Toplevel()  # change to top view
 
     add_title = Label(add_window, text=' Add a new Movie or Movie entry'.upper(), bg='white', anchor=CENTER)
     add_title.place(x=90, y=10)
@@ -63,11 +99,11 @@ def add_ui():
     addbut = Button(add_window, bg='white', text='add'.upper(), command=add)
     addbut.place(x=150, y=150)
 
-    add_window.geometry('400x200')
+    add_window.geometry('400x200+500+300')
     add_window.config(bg='white')
     add_window.title('ADD MOVIES')
-    add_window.mainloop()
-
-add_ui()
+#     add_window.mainloop()
+#
+# add_ui()
 
 

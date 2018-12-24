@@ -1,5 +1,4 @@
-from PIL import Image
-import movies
+from PIL import Image  # third party
 
 def delete_file(file):
 

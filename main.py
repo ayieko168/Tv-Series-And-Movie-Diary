@@ -8,10 +8,13 @@ import add_movie
 width = 550
 height = 650
 
-with open('series_table.json') as f:
-    data = json.load(f,)
+with open('series_table.json') as f:  # initial reading of json data for series
+    data = json.load(f)
 
 series_dict = data
+
+global treeview
+
 
 
 def main():
@@ -73,6 +76,13 @@ def main():
 
     # Widgets
 
+    menubar = Menu()
+
+    filemenu = Menu(tearoff=0)
+    filemenu.add_command(label='Exit', command=lambda : mainWindow.destroy())
+
+    menubar.add_cascade(label='File', menu=filemenu)
+
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies()
@@ -80,7 +90,7 @@ def main():
 
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
-                       bd=3)
+                       bd=3, state='disabled')
 
     searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11')
     searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3)
@@ -101,6 +111,7 @@ def main():
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")
+    mainWindow.config(menu=menubar)
     mainWindow.resizable(FALSE, FALSE)
     mainWindow.mainloop()
 
