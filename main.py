@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 import json
 import imageProcessor
+import add_movie
 
 width = 550
 height = 650
@@ -84,7 +85,7 @@ def main():
     searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11')
     searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3)
 
-    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold')
+    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui)
 
 
     # Packing Widgets
