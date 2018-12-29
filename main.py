@@ -13,18 +13,15 @@ with open('series_table.json') as f:  # initial reading of json data for series
 
 series_dict = data
 
-global treeview
-
-
 
 def main():
 
         # main tkinter window
 
     # Tkinter Functions
-    def list_movies():
+    def list_movies(lis):
 
-        for k, v in sorted(series_dict.items()):
+        for k, v in sorted(lis.items()):
             treeview.insert('', END, '#{}'.format(k), text=k)
             treeview.set('#{}'.format(k), 'sn', v[0])
             treeview.set('#{}'.format(k), 'ep', v[1])
@@ -41,6 +38,7 @@ def main():
         treeview.heading('ep', text='Episode')
 
     def selectitem(a):
+        """callback function for the treeview double click event"""
         curItem = treeview.focus()
         preview_box.window_create(index=1.0, window=Label(preview_box, text='', bg="white"))  # clear the preview box
 
@@ -67,26 +65,97 @@ def main():
         except Exception:
             pass
 
+    def selectitem_options(event):
+
+        def delete():
+
+            curitem = treeview.focus()
+            print("deleting : ", curitem)
+
+        def edit():
+
+            curitem = treeview.focus().strip("#")
+            select_values = series_dict[curitem]
+
+            print(select_values)
+
+            if curitem != "":
+                edittop = Toplevel()
+
+                editlab1 = Label(edittop, text="Current Tv-Series title : ")
+                editlab1.grid(row=1, column=1, sticky=W)
+
+                editent = Entry(edittop, textvariable=editentvar)
+                editentvar.set(curitem)
+                editent.grid(row=1, column=2, sticky=W)
+
+                editlab2 = Label(edittop, text="Current Season {}, chance to : ".format(select_values[0]))
+                editlab2.grid(row=2, column=1, sticky=W)
+
+                editspin1 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin1.grid(row=2, column=2, sticky=W)
+
+                editlab3 = Label(edittop, text="Current Episode {}, change to : ".format(select_values[1]))
+                editlab3.grid(row=3, column=1, sticky=W)
+
+                editspin2 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin2.grid(row=3, column=2, sticky=W)
+
+                editlab4 = Label(edittop, text="Current image \"{}\", change to : ".format(select_values[2].split('/')[-1]))
+                editlab4.grid(row=4, column=1, sticky=W)
+
+                editent2 = Entry(edittop, textvariable=editent2var)
+                editent2.grid(row=5, column=1, sticky=E)
+
+                edittop.geometry("550x200+200+300")
+                edittop.title("Edit properties of {} ".format(curitem).upper())
+
+        popup_menu = Menu()
+
+        popup_menu.add_command(label='Delete', command=delete)
+        popup_menu.add_command(label='Edit', command=edit)
+
+
+        popup_menu.post(event.x_root, event.y_root)
+
+    def updatelist():
+
+        pass
+
+
     mainWindow = Tk()
 
-    # Tkinter variables
+    screen_height = mainWindow.winfo_screenheight()
+    screen_width = mainWindow.winfo_screenwidth()
+
+    # Tkinter Variables
     searchentvar = StringVar()
     searchentvar.set('Search')
     searchimage = PhotoImage(file='thumbnails/search_ico.gif').subsample(15, 15)
+    editentvar = StringVar()
+    editent2var = StringVar()
+    editent2var.set("image")
+
+    # tkinter main menu bar
+
+    menubar = Menu(mainWindow)
+
+    filemenu = Menu(tearoff=0)
+    filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
+
+    options_menu = Menu(tearoff=0)
+    options_menu.add_command(label='update list', command=updatelist)
+
+    menubar.add_cascade(label='File', menu=filemenu)
+    menubar.add_cascade(label='Options', menu=options_menu)
 
     # Widgets
 
-    menubar = Menu()
-
-    filemenu = Menu(tearoff=0)
-    filemenu.add_command(label='Exit', command=lambda : mainWindow.destroy())
-
-    menubar.add_cascade(label='File', menu=filemenu)
-
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
-    list_movies()
+    list_movies(series_dict)
     treeview.bind('<Double-Button-1>', selectitem)
+    treeview.bind('<Button-2>', selectitem_options)
 
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,

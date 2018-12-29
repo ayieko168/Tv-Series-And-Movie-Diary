@@ -1,8 +1,10 @@
 from PIL import Image  # third party
 
+
 def delete_file(file):
 
     print(file)
+
 
 def convert_format(image_file):
 

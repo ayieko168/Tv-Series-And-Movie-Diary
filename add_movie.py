@@ -3,7 +3,6 @@ from tkinter import filedialog
 from tkinter import messagebox
 import os
 import json
-import main
 
 
 pat = 'thumbnails/'
