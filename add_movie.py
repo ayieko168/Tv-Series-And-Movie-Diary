@@ -4,7 +4,6 @@ from tkinter import messagebox
 import os
 import json
 
-
 pat = 'thumbnails/'
 
 
@@ -46,10 +45,12 @@ def add_ui():
                 series_dict[movie_title] = [season, episode, pat + pic]  # add the users entry
                 messagebox.showinfo('RE RUN NEEDED',
                                     'IN ORDER FOR THE NEW ENTRY TO BE \n'
-                                    'UPDATED YOU NEED TO RESTART THE APP ')
+                                    'UPDATED YOU NEED TO RESTART THE APP ', parent=add_window)
 
             with open('series_table.json', 'w') as f:  # append the entry to the json file
                 json.dump(series_dict, f, indent=4)
+        else:
+            print("not submitted")
 
         add_window.destroy()
 

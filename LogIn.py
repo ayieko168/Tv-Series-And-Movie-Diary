@@ -1,6 +1,9 @@
 
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
+import gitup
+from ast import literal_eval
+import webbrowser
 
 
 def login_UI():
@@ -8,8 +11,8 @@ def login_UI():
     login_window = Toplevel()
 
     # bind functions
-    
     def showpass():
+        """call back for show and hide button"""
         
         if password_showbut.cget('text') == 'show':
 
@@ -22,18 +25,38 @@ def login_UI():
             password_showbut.config(text='show')
 
     def signin():
+        """call back for sign in button"""
 
-        if len(user_nameent.get()) and len(passwordent.get()) >= 1:
+        global signed_inlb_var
+
+        if len(user_nameent.get()) and len(passwordent.get()) >= 1:  # test if all fields are filled
 
             user_nameent_var = user_nameent.get()
             passwordent_var = passwordent.get()
 
-            print(user_nameent_var)
-            print(passwordent_var)
+            gitup.signin(user_nameent_var, passwordent_var)
 
-        elif len(user_nameent.get()) and len(passwordent.get()) <= 1:
+            try:
+                gitup.test_signin()
+            except Exception as e:
+                gitup.signin(gitup.use, gitup.pa)
+                e = literal_eval(str(e).strip('1234567890').strip())['message']
+                print(e)
 
-            print('None')
+                if e == 'Bad credentials':
+                    messagebox.showerror(' LOGIN ERROR ', 'Try Again \n You Entered {}'.format(e), parent=login_window)
+
+        elif len(user_nameent.get()) and len(passwordent.get()) <= 1:  # if not :
+
+            print(None)
+            return None
+
+        login_window.destroy()
+
+    def sign_up():
+
+        webbrowser.open_new_tab('https://github.com/join')
+
 
     # widgets
     user_namelb = Label(login_window, text='UserName/Email : ')
@@ -63,10 +86,12 @@ def login_UI():
     sign_inlb = Button(login_window, text='Sign In', command=signin)
     sign_inlb.grid(row=5, column=2, sticky=W, ipadx=10, pady=10, padx=30)
 
-    sign_uplb = Button(login_window, text='Sign Up')
+    sign_uplb = Button(login_window, text='Sign Up', command=sign_up)
     sign_uplb.grid(row=5, column=2, sticky=E, ipadx=10, pady=10, padx=30)
 
-
     login_window.geometry('400x200')
+    login_window.title("account details")
+    login_window.resizable(width=0, height=0)
+
 
 

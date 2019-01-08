@@ -2,12 +2,19 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import json
+import sys
+import webbrowser
 import imageProcessor
 import add_movie
+import gitup
+import LogIn
+
+operating_system = sys.platform
 
 width = 550
 height = 650
 
+print('starting...')
 with open('series_table.json') as f:  # initial reading of json data for series
     data = json.load(f)
 
@@ -16,15 +23,26 @@ series_dict = data
 
 def main():
 
+    print('starting within')
+    with open('series_table.json') as f:  # initial reading of json data for series
+        data = json.load(f)
+    series_dict = data
+
+    global mainWindow ,treeview
+
         # main tkinter window
 
     # Tkinter Functions
     def list_movies(lis):
 
-        for k, v in sorted(lis.items()):
-            treeview.insert('', END, '#{}'.format(k), text=k)
-            treeview.set('#{}'.format(k), 'sn', v[0])
-            treeview.set('#{}'.format(k), 'ep', v[1])
+        try:
+            for k, v in sorted(lis.items()):
+                treeview.insert('', END, '#{}'.format(k), text=k)
+                treeview.set('#{}'.format(k), 'sn', v[0])
+                treeview.set('#{}'.format(k), 'ep', v[1])
+
+        except Exception as e:
+            pass
 
     def tree_configure():
 
@@ -50,7 +68,6 @@ def main():
             except KeyError:
                 messagebox.showinfo('INFO...', ' TRY AND SELECT A VALID OPTION ')
 
-        # print(treeview.item(curItem))
 
         try:
             try:
@@ -66,61 +83,100 @@ def main():
             pass
 
     def selectitem_options(event):
+        """call back function when right click on an item"""
 
         def delete():
+            """delete the selected item"""
 
-            curitem = treeview.focus()
+            curitem = treeview.focus().strip().strip('#')
             print("deleting : ", curitem)
 
+            del series_dict[curitem]
+
+            print(series_dict)
+
+            with open('series_table.json', 'w') as f:
+                json.dump(series_dict, f, indent=4)
+
         def edit():
+            """edit the properties of the selected item"""
 
             curitem = treeview.focus().strip("#")
             select_values = series_dict[curitem]
 
-            print(select_values)
+            def raging_fire():
+                """call back function for edit button in the edit window"""
 
-            if curitem != "":
+                if editspin1.get() != '1':
+                    print(editspin1.get())
+                    select_values[0] = int(editspin1.get())
+                if editspin2.get() != '1':
+                    print(editspin2.get())
+                    select_values[1] = int(editspin2.get())
+                if editentvar.get() != curitem:
+                    print(editentvar.get())
+                    series_dict[editentvar.get()] = series_dict.pop(curitem)
+                if editent2var.get() != select_values[2].split('/')[1]:
+                    print(editent2var.get())
+
+                edittop.destroy()
+
+            if curitem != "":  # test if an item is highlighted first
                 edittop = Toplevel()
 
                 editlab1 = Label(edittop, text="Current Tv-Series title : ")
-                editlab1.grid(row=1, column=1, sticky=W)
+                editlab1.grid(row=1, column=1, sticky=W, pady=4)
 
-                editent = Entry(edittop, textvariable=editentvar)
+                editent = Entry(edittop, textvariable=editentvar, width=30)
                 editentvar.set(curitem)
-                editent.grid(row=1, column=2, sticky=W)
+                editent.grid(row=1, column=2, sticky=W, pady=4)
 
                 editlab2 = Label(edittop, text="Current Season {}, chance to : ".format(select_values[0]))
-                editlab2.grid(row=2, column=1, sticky=W)
+                editlab2.grid(row=2, column=1, sticky=W, pady=4)
 
                 editspin1 = Spinbox(edittop, from_=1, to=1000, width=5)
-                editspin1.grid(row=2, column=2, sticky=W)
+                editspin1.grid(row=2, column=2, sticky=W, pady=4)
 
                 editlab3 = Label(edittop, text="Current Episode {}, change to : ".format(select_values[1]))
-                editlab3.grid(row=3, column=1, sticky=W)
+                editlab3.grid(row=3, column=1, sticky=W, pady=4)
 
                 editspin2 = Spinbox(edittop, from_=1, to=1000, width=5)
-                editspin2.grid(row=3, column=2, sticky=W)
+                editspin2.grid(row=3, column=2, sticky=W, pady=4)
 
-                editlab4 = Label(edittop, text="Current image \"{}\", change to : ".format(select_values[2].split('/')[-1]))
-                editlab4.grid(row=4, column=1, sticky=W)
+                editlab4 = Label(edittop, text="Change image to : ")
+                editlab4.grid(row=4, column=1, sticky=W, pady=4)
 
-                editent2 = Entry(edittop, textvariable=editent2var)
-                editent2.grid(row=5, column=1, sticky=E)
+                editent2 = Entry(edittop, textvariable=editent2var, width=35)
+                editent2var.set(select_values[2].split('/')[1])
+                editent2.grid(row=4, column=2, sticky=E, pady=4)
 
-                edittop.geometry("550x200+200+300")
+                editbut = Button(edittop, text='Edit', command=raging_fire)
+                editbut.grid(row=5, column=1, sticky=W, pady=4, padx=20)
+
+                edittop.geometry("400x200+200+300")
                 edittop.title("Edit properties of {} ".format(curitem).upper())
 
-        popup_menu = Menu()
+        def watch():
+            curItem = treeview.focus().strip('#')
 
+            print('watch {}'.format(curItem))
+
+            webbrowser.open_new_tab('http://fmovies.pm/search-movies/{}.html'.format(curItem))
+
+        def download_it():
+            curItem = treeview.focus().strip('#')
+
+            print('download {}'.format(curItem))
+
+            webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
+
+        popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_command(label='Edit', command=edit)
-
+        popup_menu.add_command(label="watch online", command=watch)
+        popup_menu.add_command(label='Download', command=download_it)
 
         popup_menu.post(event.x_root, event.y_root)
-
-    def updatelist():
-
-        pass
 
 
     mainWindow = Tk()
@@ -135,6 +191,11 @@ def main():
     editentvar = StringVar()
     editent2var = StringVar()
     editent2var.set("image")
+    signed_inlb_var = StringVar()
+    try:
+        signed_inlb_var.set('Signed in as {}'.format(gitup.get_user()))
+    except Exception as e:
+        signed_inlb_var.set('Not Connected')
 
     # tkinter main menu bar
 
@@ -142,20 +203,28 @@ def main():
 
     filemenu = Menu(tearoff=0)
     filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
+    filemenu.add_command(label='Push', command=lambda: gitup.push_up())
+    filemenu.add_command(label='Pull', command=lambda: gitup.pull_down())
 
     options_menu = Menu(tearoff=0)
-    options_menu.add_command(label='update list', command=updatelist)
+    options_menu.add_command(label='update list', command=refresh)
+    options_menu.add_checkbutton(label='Online thumbs')
+    options_menu.add_command(label="Account Login", command=LogIn.login_UI)
 
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
 
     # Widgets
 
+    signed_inlb = Label(mainWindow, textvariable=signed_inlb_var)
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies(series_dict)
     treeview.bind('<Double-Button-1>', selectitem)
-    treeview.bind('<Button-2>', selectitem_options)
+    if operating_system == 'win32' or 'linux' or 'cygwin':
+        treeview.bind('<Button-3>', selectitem_options)
+    elif operating_system == 'darwin':
+        treeview.bind('<Button-2>', selectitem_options)
 
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
@@ -169,12 +238,13 @@ def main():
 
     # Packing Widgets
 
+    signed_inlb.place(x=10, y=3)
     previewlb.pack(side=LEFT, anchor=S, pady=20, padx=2)
     preview_box.pack(side=LEFT, padx=5, pady=5, anchor=S)
     treeview.pack(side=RIGHT, fill=Y)
 
-    searchent.place(x=10, y=40)
-    searchbut.place(x=242, y=40)
+    searchent.place(x=10, y=60)
+    searchbut.place(x=242, y=60)
 
     addbut.place(x=65, y=115)
 
@@ -186,4 +256,9 @@ def main():
 
 
 if __name__ == '__main__':
+    def refresh():
+
+        mainWindow.destroy()
+        main()
+
     main()
