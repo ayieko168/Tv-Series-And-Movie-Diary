@@ -2,11 +2,17 @@ from tkinter import messagebox
 from github import Github
 from ast import literal_eval
 import urllib.request
+import json
+import checker
 
-g = Github("ayieko168", "joshuambago1230Q#", timeout=10)
+with open("details.json", "r") as f:
+    data = json.load(f)
 
-use = 'ayieko168'
-pa = 'joshuambago1230Q#'
+_pass = checker.decoder(data["pas"])
+use = data["use"]
+
+g = Github(use, _pass, timeout=10)
+
 
 
 def signin(username, password):
@@ -44,7 +50,7 @@ def push_up():
         with open('series_table.json') as f:  # initial reading of json data for series
             data = f.read()
 
-        signin(use, pa)
+        signin(use, _pass)
 
         try:
             """try to create a new repo called tv series data"""
@@ -90,7 +96,7 @@ def pull_down():
 
     if q == 'yes':
 
-        signin(use, pa)
+        signin(use, _pass)
 
         try:
             """try to create a new repo called tv series data"""

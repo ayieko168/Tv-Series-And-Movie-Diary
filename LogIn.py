@@ -4,11 +4,18 @@ from tkinter import ttk, messagebox
 import gitup
 from ast import literal_eval
 import webbrowser
+import json
+import checker
 
 
 def login_UI():
 
+    with open('details.json') as f:
+        details_dict = json.load(f)
+
     login_window = Toplevel()
+
+    remember_mecheck_var = BooleanVar()
 
     # bind functions
     def showpass():
@@ -29,29 +36,40 @@ def login_UI():
 
         global signed_inlb_var
 
+        with open('series_table.json') as f:  # initial reading of json data for series
+            data = json.load(f)
+
         if len(user_nameent.get()) and len(passwordent.get()) >= 1:  # test if all fields are filled
 
             user_nameent_var = user_nameent.get()
             passwordent_var = passwordent.get()
 
-            gitup.signin(user_nameent_var, passwordent_var)
-
             try:
+                gitup.signin(user_nameent_var, passwordent_var)
                 gitup.test_signin()
+
+                if remember_mecheck_var.get() == True:
+                    details_dict["use"] = user_nameent_var
+                    details_dict["pas"] = checker.encoder(passwordent_var)
+
+                    with open('details.json', "w") as f:
+                        json.dump(details_dict, f, indent=4)
+
+                    login_window.destroy()
+
             except Exception as e:
-                gitup.signin(gitup.use, gitup.pa)
+                gitup.signin(gitup.use, gitup._pass)
                 e = literal_eval(str(e).strip('1234567890').strip())['message']
                 print(e)
-
                 if e == 'Bad credentials':
                     messagebox.showerror(' LOGIN ERROR ', 'Try Again \n You Entered {}'.format(e), parent=login_window)
+
 
         elif len(user_nameent.get()) and len(passwordent.get()) <= 1:  # if not :
 
             print(None)
             return None
 
-        login_window.destroy()
 
     def sign_up():
 
@@ -80,7 +98,7 @@ def login_UI():
     remember_melb = Label(login_window, text='Remember Me')
     remember_melb.grid(row=4, column=2, sticky=W, padx=28)
 
-    remember_mecheck = Checkbutton(login_window)
+    remember_mecheck = Checkbutton(login_window, variable=remember_mecheck_var, command=lambda: print(remember_mecheck_var.get()))
     remember_mecheck.grid(row=4, column=2, sticky=W)
 
     sign_inlb = Button(login_window, text='Sign In', command=signin)

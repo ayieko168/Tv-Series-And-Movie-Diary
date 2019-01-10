@@ -3,6 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 import os
 import json
+import datetime
 
 pat = 'thumbnails/'
 
@@ -34,7 +35,7 @@ def add_ui():
                 print(choise)
                 if choise == 'yes':
                     print('updating')
-                    series_dict[movie_title] = [season, episode, pat+pic]  # add the users entry
+                    series_dict[movie_title] = [season, episode, pat+pic, "{}".format(datetime.datetime.now())]  # add the users entry
                     messagebox.showinfo('RE RUN NEEDED',
                                         'IN ORDER FOR THE NEW ENTRY TO BE \n'
                                         'UPDATED YOU NEED TO RESTART THE APP ')
@@ -42,13 +43,14 @@ def add_ui():
                     print('skipping')
                     pass
             else:
-                series_dict[movie_title] = [season, episode, pat + pic]  # add the users entry
+                series_dict[movie_title] = [season, episode, pat + pic, "{}".format(datetime.datetime.now())]  # add the users entry
                 messagebox.showinfo('RE RUN NEEDED',
                                     'IN ORDER FOR THE NEW ENTRY TO BE \n'
                                     'UPDATED YOU NEED TO RESTART THE APP ', parent=add_window)
 
-            with open('series_table.json', 'w') as f:  # append the entry to the json file
+            with open('series_table.json', 'w') as f:
                 json.dump(series_dict, f, indent=4)
+
         else:
             print("not submitted")
 

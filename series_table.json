@@ -1,37 +1,68 @@
 {
-    "Two Broke Girls": [
-        1,
-        1,
-        "thumbnails/2-broke-girls-539.gif"
-    ],
     "Breaking Bad": [
         5,
         1,
-        "thumbnails/thumbnails/breaking-bad-2583.gif"
+        "thumbnails/thumbnails/breaking-bad-2583.gif",
+        "2019-01-10 00:48:52.220921"
     ],
     "Scorpion": [
         3,
         2,
-        "thumbnails/scorpion-1111.gif "
+        "thumbnails/scorpion-1111.gif ",
+        "2019-01-10 00:48:52.220921"
     ],
     "The Big Bang Theory": [
+        10,
         1,
-        1,
-        "thumbnails/bigbang.gif"
+        "thumbnails/bigbang.gif",
+        "2019-01-10 00:48:52.220921"
     ],
     "Game Of Thrones": [
         1,
         1,
-        "thumbnails/game-of-thrones-481.gif"
+        "thumbnails/game-of-thrones-481.gif",
+        "2019-01-10 00:48:52.220921"
     ],
     "Grown-Ish": [
         1,
         1,
-        "thumbnails/scorpion-1111.gif"
+        "thumbnails/scorpion-1111.gif",
+        "2019-01-10 00:48:52.220921"
     ],
     "F Is For Family": [
         3,
         10,
-        "thumbnails/"
+        "thumbnails/",
+        "2019-01-10 00:48:52.220921"
+    ],
+    "2 Broke Girls": [
+        6,
+        22,
+        "thumbnails/thumb_50_42.gif",
+        "2019-01-10 00:48:52.220921"
+    ],
+    "Blindspot": [
+        4,
+        6,
+        "thumbnails/",
+        "2019-01-10 00:48:52.220921"
+    ],
+    "Peaky Blinders": [
+        4,
+        6,
+        "thumbnails/",
+        "2019-01-10 00:48:52.220921"
+    ],
+    "Taboo": [
+        1,
+        10,
+        "thumbnails/",
+        "2019-01-10 00:48:52.220921"
+    ],
+    "Black List": [
+        2,
+        1,
+        "thumbnails/",
+        "2019-01-10 00:52:04.228195"
     ]
 }

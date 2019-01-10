@@ -4,6 +4,7 @@ from tkinter import messagebox
 import json
 import sys
 import webbrowser
+import datetime
 import imageProcessor
 import add_movie
 import gitup
@@ -28,7 +29,7 @@ def main():
         data = json.load(f)
     series_dict = data
 
-    global mainWindow ,treeview
+    global mainWindow, treeview
 
         # main tkinter window
 
@@ -57,6 +58,7 @@ def main():
 
     def selectitem(a):
         """callback function for the treeview double click event"""
+        global select_values
         curItem = treeview.focus()
         preview_box.window_create(index=1.0, window=Label(preview_box, text='', bg="white"))  # clear the preview box
 
@@ -71,12 +73,13 @@ def main():
 
         try:
             try:
+                """show local thumbnails on double click"""
                 img = imageProcessor.convert_format(select_values[2])
                 img = imageProcessor.resize_image(img)
                 image = PhotoImage(file=img)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            except AttributeError:
+            except Exception:
                 preview_box.delete(0.1, END)
                 preview_box.window_create(index=1.0, window=Label(preview_box, text='No Preview '))
         except Exception:
@@ -107,16 +110,26 @@ def main():
             def raging_fire():
                 """call back function for edit button in the edit window"""
 
-                if editspin1.get() != '1':
-                    print(editspin1.get())
+                if editspin1.get() != '1':  # season
                     select_values[0] = int(editspin1.get())
-                if editspin2.get() != '1':
-                    print(editspin2.get())
+                    select_values[3] = "{}".format(datetime.datetime.now())
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=4)
+
+                if editspin2.get() != '1':  # episode
                     select_values[1] = int(editspin2.get())
-                if editentvar.get() != curitem:
-                    print(editentvar.get())
-                    series_dict[editentvar.get()] = series_dict.pop(curitem)
+                    select_values[3] = "{}".format(datetime.datetime.now())
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=4)
+
+                if editentvar.get() != curitem:  # name
+                    series_dict[editentvar.get().title()] = series_dict.pop(curitem)
+                    select_values[3] = "{}".format(datetime.datetime.now())
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=4)
+
                 if editent2var.get() != select_values[2].split('/')[1]:
+                    select_values[3] = "{}".format(datetime.datetime.now()) # pic
                     print(editent2var.get())
 
                 edittop.destroy()
@@ -192,6 +205,8 @@ def main():
     editent2var = StringVar()
     editent2var.set("image")
     signed_inlb_var = StringVar()
+    auto_refresh_var = BooleanVar()
+
     try:
         signed_inlb_var.set('Signed in as {}'.format(gitup.get_user()))
     except Exception as e:
@@ -210,6 +225,7 @@ def main():
     options_menu.add_command(label='update list', command=refresh)
     options_menu.add_checkbutton(label='Online thumbs')
     options_menu.add_command(label="Account Login", command=LogIn.login_UI)
+    options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var, command=lambda: print(auto_refresh_var.get()))
 
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
@@ -256,9 +272,13 @@ def main():
 
 
 if __name__ == '__main__':
+    
     def refresh():
-
         mainWindow.destroy()
         main()
 
     main()
+
+
+
+
