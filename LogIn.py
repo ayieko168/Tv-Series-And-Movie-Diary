@@ -13,7 +13,7 @@ def login_UI():
     with open('details.json') as f:
         details_dict = json.load(f)
 
-    login_window = Toplevel()
+    login_window = Toplevel(bg="white")
 
     remember_mecheck_var = BooleanVar()
 
@@ -77,34 +77,34 @@ def login_UI():
 
 
     # widgets
-    user_namelb = Label(login_window, text='UserName/Email : ')
+    user_namelb = Label(login_window, text='UserName/Email : ', bg="white")
     user_namelb.grid(row=1, column=1, padx=10, pady=20)
     
-    user_nameent = Entry(login_window, width=40)
+    user_nameent = Entry(login_window, width=40, bg="white")
     user_nameent.grid(row=1, column=2)
     
-    passwordlb = Label(login_window, text='Password : ')
+    passwordlb = Label(login_window, text='Password : ', bg="white")
     passwordlb.grid(row=2, column=1, sticky=E, ipadx=10)
 
-    passwordent = Entry(login_window, width=30, show='*')
+    passwordent = Entry(login_window, width=30, show='*', bg="white")
     passwordent.grid(row=2, column=2, sticky=W)
 
-    password_showbut = Button(login_window, text='show', command=showpass)
+    password_showbut = Button(login_window, text='show', command=showpass, bg="white")
     password_showbut.grid(row=2, column=2, sticky=E)
 
     sep1 = ttk.Separator(login_window)
     sep1.grid(row=3, column=1, columnspan=4, padx=5, pady=5, sticky=E+W)
 
-    remember_melb = Label(login_window, text='Remember Me')
+    remember_melb = Label(login_window, text='Remember Me', bg="white")
     remember_melb.grid(row=4, column=2, sticky=W, padx=28)
 
-    remember_mecheck = Checkbutton(login_window, variable=remember_mecheck_var, command=lambda: print(remember_mecheck_var.get()))
+    remember_mecheck = Checkbutton(login_window, variable=remember_mecheck_var, bg="white", command=lambda: print(remember_mecheck_var.get()))
     remember_mecheck.grid(row=4, column=2, sticky=W)
 
-    sign_inlb = Button(login_window, text='Sign In', command=signin)
+    sign_inlb = Button(login_window, text='Sign In', command=signin, bg="white")
     sign_inlb.grid(row=5, column=2, sticky=W, ipadx=10, pady=10, padx=30)
 
-    sign_uplb = Button(login_window, text='Sign Up', command=sign_up)
+    sign_uplb = Button(login_window, text='Sign Up', command=sign_up, bg="white")
     sign_uplb.grid(row=5, column=2, sticky=E, ipadx=10, pady=10, padx=30)
 
     login_window.geometry('400x200')

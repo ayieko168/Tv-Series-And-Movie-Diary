@@ -202,7 +202,7 @@ def main():
     # Tkinter Variables
     searchentvar = StringVar()
     searchentvar.set('Search')
-    searchimage = PhotoImage(file='thumbnails/search_ico.gif').subsample(15, 15)
+    searchimage = PhotoImage(file='thumbnails/search_ico.gif').subsample(15, 20)
     editentvar = StringVar()
     editent2var = StringVar()
     editent2var.set("image")
@@ -234,7 +234,7 @@ def main():
 
     # Widgets
 
-    signed_inlb = Label(mainWindow, textvariable=signed_inlb_var)
+    signed_inlb = Label(mainWindow, textvariable=signed_inlb_var, bg="white")
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies(series_dict)
@@ -244,14 +244,14 @@ def main():
     elif operating_system == 'darwin':
         treeview.bind('<Button-2>', selectitem_options)
 
-    previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11')
+    previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11', bg="white")
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
-                       bd=3, state='disabled')
+                       bd=3, state='disabled', bg="white")
 
-    searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11')
-    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3)
+    searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11', bg="white")
+    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white")
 
-    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui)
+    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white")
 
 
     # Packing Widgets
@@ -268,7 +268,7 @@ def main():
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")
-    mainWindow.config(menu=menubar)
+    mainWindow.config(menu=menubar, bg="white")
     mainWindow.resizable(FALSE, FALSE)
     mainWindow.mainloop()
 
