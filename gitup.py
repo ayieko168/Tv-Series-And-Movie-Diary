@@ -7,8 +7,11 @@ import checker
 
 with open("details.json", "r") as f:
     data = json.load(f)
+try:
+    _pass = checker.decoder(data["pas"])
+except ValueError :
+    _pass = ''
 
-_pass = checker.decoder(data["pas"])
 use = data["use"]
 
 g = Github(use, _pass, timeout=10)

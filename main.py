@@ -186,7 +186,9 @@ def main():
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_command(label='Edit', command=edit)
-        popup_menu.add_command(label="watch online", command=watch)
+        popup_menu.add_command(label="Complete")
+        popup_menu.add_separator()
+        popup_menu.add_command(label="Watch Online", command=watch)
         popup_menu.add_command(label='Download', command=download_it)
 
         popup_menu.post(event.x_root, event.y_root)
