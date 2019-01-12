@@ -5,7 +5,11 @@ import json
 import sys
 import webbrowser
 import datetime
+from PIL import Image, ImageTk
+import shutil
+import requests
 import imageProcessor
+import os
 import add_movie
 import gitup
 import LogIn
@@ -16,8 +20,14 @@ width = 550
 height = 650
 
 print('starting...')
-with open('series_table.json') as f:  # initial reading of json data for series
-    data = json.load(f)
+try:
+    with open('series_table.json') as f:  # initial reading of json data for series
+        data = json.load(f)
+except FileNotFoundError:
+    with open("series_table.json", "w") as f:
+        json.dump({}, f, indent=2)
+    with open('series_table.json') as f:  # initial reading of json data for series
+        data = json.load(f)
 
 series_dict = data
 
@@ -58,32 +68,73 @@ def main():
 
     def selectitem(a):
         """callback function for the treeview double click event"""
-        global select_values
-        curItem = treeview.focus()
-        preview_box.window_create(index=1.0, window=Label(preview_box, text='', bg="white"))  # clear the preview box
+        curItem = treeview.focus().strip('#')
+        name = "-".join(curItem.lower().split())
 
-        try:
-            select_values = series_dict[curItem]
-        except KeyError:
+        local_image_path = series_dict[curItem][2]
+
+        if jep.get() == 0:  # online thumbs is false
             try:
-                select_values = series_dict[curItem.strip('#').strip()]
-            except KeyError:
-                messagebox.showinfo('INFO...', ' TRY AND SELECT A VALID OPTION ')
-
-
-        try:
-            try:
-                """show local thumbnails on double click"""
-                img = imageProcessor.convert_format(select_values[2])
-                img = imageProcessor.resize_image(img)
-                image = PhotoImage(file=img)
+                """ 1st try to load image from local thumbs directory """
+                # image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/Shadow-Guy-Shrugging.jpg")))
+                image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(local_image_path)))
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            except Exception:
-                preview_box.delete(0.1, END)
-                preview_box.window_create(index=1.0, window=Label(preview_box, text='No Preview '))
-        except Exception:
-            pass
+            except Exception as e1:
+                print(type(e1), e1)
+                if str(type(e1)) == "<class 'PermissionError'>":
+                    image = ImageTk.PhotoImage(Image.open("thumbnails/Shadow-Guy-Shrugging.jpg"))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                elif str(type(e1)) == "<class 'FileNotFoundError'>":
+                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/exclamation.jpg")))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+        else: # if online thumbs is true
+            curItem = treeview.focus().strip('#')
+            with open("images_url_dict.json", "r") as f:
+                imgs_dict = json.load(f)
+
+            name = "-".join(curItem.lower().split())
+            img_list = imgs_dict[name]
+            img_url = img_list[0]
+            try:
+                """try to make temp file"""
+                os.mkdir("/Windows/Temp/tv_series_temp_thumbs")
+                try:
+                    """try to load image without downloding"""
+                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                except FileNotFoundError:
+                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                    if r.status_code == 200:
+                        with open(imageProcessor.resize_image(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))), 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
+                    print("Done downloading")
+
+                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+            except FileExistsError:
+                """if dir already available"""
+                try:
+                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                except FileNotFoundError:
+                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                    if r.status_code == 200:
+                        with open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)), 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
+                    print("Done downloading")
+
+                    image = ImageTk.PhotoImage(Image.open("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+
 
     def selectitem_options(event):
         """call back function when right click on an item"""
@@ -99,7 +150,7 @@ def main():
             print(series_dict)
 
             with open('series_table.json', 'w') as f:
-                json.dump(series_dict, f, indent=4)
+                json.dump(series_dict, f, indent=2)
 
         def edit():
             """edit the properties of the selected item"""
@@ -112,29 +163,32 @@ def main():
 
                 if editspin1.get() != '1':  # season
                     select_values[0] = int(editspin1.get())
-                    select_values[3] = "{}".format(datetime.datetime.now())
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
                     with open('series_table.json', 'w') as f:
-                        json.dump(series_dict, f, indent=4)
+                        json.dump(series_dict, f, indent=2)
 
                 if editspin2.get() != '1':  # episode
                     select_values[1] = int(editspin2.get())
-                    select_values[3] = "{}".format(datetime.datetime.now())
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
                     with open('series_table.json', 'w') as f:
-                        json.dump(series_dict, f, indent=4)
+                        json.dump(series_dict, f, indent=2)
 
                 if editentvar.get() != curitem:  # name
-                    series_dict[editentvar.get().title()] = series_dict.pop(curitem)
+                    series_dict[editentvar.get().title()] = series_dict.pop(curitem)  # update the modify date
                     select_values[3] = "{}".format(datetime.datetime.now())
                     with open('series_table.json', 'w') as f:
-                        json.dump(series_dict, f, indent=4)
+                        json.dump(series_dict, f, indent=2)
 
-                if editent2var.get() != select_values[2].split('/')[1]:
-                    select_values[3] = "{}".format(datetime.datetime.now()) # pic
-                    print(editent2var.get())
+                if editent2var.get() != select_values[2].split('/')[1]:  # pic
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
+                    select_values[2] = editent2var.get()
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
 
                 edittop.destroy()
 
             if curitem != "":  # test if an item is highlighted first
+                """the actual ecit window widgets"""
                 edittop = Toplevel()
 
                 editlab1 = Label(edittop, text="Current Tv-Series title : ")
@@ -166,6 +220,9 @@ def main():
                 editbut = Button(edittop, text='Edit', command=raging_fire)
                 editbut.grid(row=5, column=1, sticky=W, pady=4, padx=20)
 
+                download_thumbbut = Button(edittop, text="Download The thumbnail", command=download_thumb)
+                download_thumbbut.grid(row=5, column=2, sticky=W, pady=4, padx=20)
+
                 edittop.geometry("400x200+200+300")
                 edittop.title("Edit properties of {} ".format(curitem).upper())
 
@@ -183,11 +240,67 @@ def main():
 
             webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
 
+        def view_thumbnail():
+            curItem = treeview.focus().strip('#')
+            with open("images_url_dict.json", "r") as f:
+                imgs_dict = json.load(f)
+
+            name = "-".join(curItem.lower().split())
+            img_list = imgs_dict[name]
+            img_url = img_list[0]
+            try:
+                print(img_list)
+                r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                if r.status_code == 200:
+                    with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+                print("Done downloading")
+                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
+                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                Label.image = image
+                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+            except KeyError :
+                print("key error")
+            #restart_but_img = ImageTk.PhotoImage(Image.open("icons/reload_32px.png"))
+            #webbrowser.open_new_tab('{}'.format(curItem))
+
+        def download_thumb():
+
+            curItem = treeview.focus().strip('#')
+            select_values = series_dict[curItem]
+            print(curItem)
+            with open("images_url_dict.json", "r") as f53:
+                imgs_dict = json.load(f53)
+
+            name = "-".join(curItem.lower().split())
+            img_list = imgs_dict[name]
+            img_url = img_list[0]
+
+            r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+            path = "thumbnails/{}.jpg".format(name)
+            if r.status_code == 200:
+                with open(path, 'wb') as f3:
+                    r.raw.decode_content = True
+                    shutil.copyfileobj(r.raw, f3)
+            print("Done downloading")
+            select_values = series_dict[curItem]
+            editent2var.set(path)
+            with open('series_table.json', 'w') as f5:
+                json.dump(series_dict, f5, indent=2)
+
+        def watch_trailler():
+            curItem = treeview.focus().strip('#')
+
+            webbrowser.open_new_tab("https://www.youtube.com/results?search_query={}".format(curItem))
+
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_command(label='Edit', command=edit)
         popup_menu.add_command(label="Complete")
+        popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
         popup_menu.add_separator()
+        popup_menu.add_command(label="Watch Trailer", command=watch_trailler)
         popup_menu.add_command(label="Watch Online", command=watch)
         popup_menu.add_command(label='Download', command=download_it)
 
@@ -202,12 +315,13 @@ def main():
     # Tkinter Variables
     searchentvar = StringVar()
     searchentvar.set('Search')
-    searchimage = PhotoImage(file='thumbnails/search_ico.gif').subsample(15, 20)
+    searchimage = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
     editentvar = StringVar()
     editent2var = StringVar()
     editent2var.set("image")
     signed_inlb_var = StringVar()
     auto_refresh_var = BooleanVar()
+    jep = BooleanVar()
 
     try:
         signed_inlb_var.set('Signed in as {}'.format(gitup.get_user()))
@@ -225,7 +339,7 @@ def main():
 
     options_menu = Menu(tearoff=0)
     options_menu.add_command(label='update list', command=refresh)
-    options_menu.add_checkbutton(label='Online thumbs')
+    options_menu.add_checkbutton(label='Online thumbs', variable=jep, command=lambda: print(jep.get()))
     options_menu.add_command(label="Account Login", command=LogIn.login_UI)
     options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var, command=lambda: print(auto_refresh_var.get()))
 
@@ -234,7 +348,7 @@ def main():
 
     # Widgets
 
-    signed_inlb = Label(mainWindow, textvariable=signed_inlb_var, bg="white")
+    signed_inlb = Label(mainWindow, textvariable=signed_inlb_var, bg="white", fg="black")
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies(series_dict)
@@ -244,14 +358,14 @@ def main():
     elif operating_system == 'darwin':
         treeview.bind('<Button-2>', selectitem_options)
 
-    previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11', bg="white")
+    previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11', bg="white", fg="black")
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
-                       bd=3, state='disabled', bg="white")
+                       bd=3, state='disabled', bg="white", fg="black")
 
-    searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11', bg="white")
-    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white")
+    searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11', bg="white", fg="black")
+    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white", fg="black")
 
-    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white")
+    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white", fg="black")
 
 
     # Packing Widgets

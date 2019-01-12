@@ -53,7 +53,7 @@ def login_UI():
                     details_dict["pas"] = checker.encoder(passwordent_var)
 
                     with open('details.json', "w") as f:
-                        json.dump(details_dict, f, indent=4)
+                        json.dump(details_dict, f, indent=2)
 
                     login_window.destroy()
 
@@ -98,7 +98,7 @@ def login_UI():
     remember_melb = Label(login_window, text='Remember Me', bg="white")
     remember_melb.grid(row=4, column=2, sticky=W, padx=28)
 
-    remember_mecheck = Checkbutton(login_window, variable=remember_mecheck_var, bg="white", command=lambda: print(remember_mecheck_var.get()))
+    remember_mecheck = Checkbutton(login_window, variable=remember_mecheck_var, bg="white")
     remember_mecheck.grid(row=4, column=2, sticky=W)
 
     sign_inlb = Button(login_window, text='Sign In', command=signin, bg="white")
