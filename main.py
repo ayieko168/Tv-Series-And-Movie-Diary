@@ -147,8 +147,6 @@ def main():
 
             del series_dict[curitem]
 
-            print(series_dict)
-
             with open('series_table.json', 'w') as f:
                 json.dump(series_dict, f, indent=2)
 
