@@ -2,7 +2,9 @@
 from tkinter import *
 from tkinter import ttk, messagebox
 import gitup
+from github import Github
 from ast import literal_eval
+import urllib.request
 import webbrowser
 import json
 import checker
@@ -15,17 +17,39 @@ def login_UI():
 
     login_window = Toplevel(bg="white")
 
+    global user_nameent_var, passwordent_var
+
     remember_mecheck_var = BooleanVar()
+    remember_mecheck_var.set(True)
+    user_nameent_var = StringVar()
+    passwordent_var = StringVar()
 
     # bind functions
+    def download_data():
+        g = Github(user_nameent_var, passwordent_var)
+        try:
+            """try to downlaod "series_table" json files from tv series data"""
+            user = g.get_user().login
+            repo = g.get_repo("{}/Tv-series-data".format(user))
+            tv_series_contents = repo.get_file_contents("series_table.json")
+            tv_series_contents_url = tv_series_contents.download_url
+
+            print("downloading files")
+            urllib.request.urlretrieve(tv_series_contents_url, filename="series_table.json")
+
+            print("done downloading")
+        except Exception as e:
+            e = literal_eval(str(e).strip('1234567890').strip())['message']
+            print(e)
+
     def showpass():
         """call back for show and hide button"""
-        
+
         if password_showbut.cget('text') == 'show':
 
             passwordent.config(show='')
             password_showbut.config(text='hide')
-            
+
         elif password_showbut.cget('text') == 'hide':
 
             passwordent.config(show='*')
@@ -34,28 +58,31 @@ def login_UI():
     def signin():
         """call back for sign in button"""
 
-        global signed_inlb_var
+        global signed_inlb_var, user_nameent_var, passwordent_var
 
         with open('series_table.json') as f:  # initial reading of json data for series
             data = json.load(f)
 
         if len(user_nameent.get()) and len(passwordent.get()) >= 1:  # test if all fields are filled
-
             user_nameent_var = user_nameent.get()
             passwordent_var = passwordent.get()
 
             try:
+                """try to sign in to github using provided cridentials"""
                 gitup.signin(user_nameent_var, passwordent_var)
                 gitup.test_signin()
 
                 if remember_mecheck_var.get() == True:
+                    """if rememer me is true, store the cridentials in details json file"""
                     details_dict["use"] = user_nameent_var
                     details_dict["pas"] = checker.encoder(passwordent_var)
 
                     with open('details.json', "w") as f:
                         json.dump(details_dict, f, indent=2)
 
-                    login_window.destroy()
+                login_window.destroy()
+                print("downloading the series list")
+                download_data()
 
             except Exception as e:
                 gitup.signin(gitup.use, gitup._pass)
@@ -64,25 +91,28 @@ def login_UI():
                 if e == 'Bad credentials':
                     messagebox.showerror(' LOGIN ERROR ', 'Try Again \n You Entered {}'.format(e), parent=login_window)
 
-
         elif len(user_nameent.get()) and len(passwordent.get()) <= 1:  # if not :
 
             print(None)
             return None
 
-
     def sign_up():
 
-        webbrowser.open_new_tab('https://github.com/join')
-
+        info = messagebox.askokcancel("NOTE", "After creation of the account,\ndont forget to VERIFY your account,\nvia the used email address", parent=login_window)
+        print(info)
+        if info == True:
+            webbrowser.open_new_tab('https://github.com/join')
+            messagebox.showinfo("INFO",
+                                "I Just Cant Stress Enough\nHow Important It is That You Verify Your Email Address",
+                                parent=login_window)
 
     # widgets
     user_namelb = Label(login_window, text='UserName/Email : ', bg="white")
     user_namelb.grid(row=1, column=1, padx=10, pady=20)
-    
+
     user_nameent = Entry(login_window, width=40, bg="white")
     user_nameent.grid(row=1, column=2)
-    
+
     passwordlb = Label(login_window, text='Password : ', bg="white")
     passwordlb.grid(row=2, column=1, sticky=E, ipadx=10)
 
@@ -110,6 +140,5 @@ def login_UI():
     login_window.geometry('400x200')
     login_window.title("account details")
     login_window.resizable(width=0, height=0)
-
 
 

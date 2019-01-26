@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
 import json
 import sys
 import webbrowser
@@ -36,12 +35,15 @@ def main():
 
     print('starting within')
     with open('series_table.json') as f:  # initial reading of json data for series
-        data = json.load(f)
-    series_dict = data
+        series_dict = json.load(f)
+    # with open("details.json", "r") as f:
+    #     details_data = json.load(f)
+    #
+    # gitup.signin(details_data["use"], checker.decoder(details_data["pas"]))
 
     global mainWindow, treeview
 
-        # main tkinter window
+    # main tkinter window
 
     # Tkinter Functions
     def list_movies(lis):
@@ -68,76 +70,86 @@ def main():
 
     def selectitem(a):
         """callback function for the treeview double click event"""
-        curItem = treeview.focus().strip('#')
-        name = "-".join(curItem.lower().split())
-
-        local_image_path = series_dict[curItem][2]
-
-        if jep.get() == 0:  # online thumbs is false
-            try:
-                """ 1st try to load image from local thumbs directory """
-                # image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/Shadow-Guy-Shrugging.jpg")))
-                image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(local_image_path)))
-                Label.image = image
-                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            except Exception as e1:
-                print(type(e1), e1)
-                if str(type(e1)) == "<class 'PermissionError'>":
-                    image = ImageTk.PhotoImage(Image.open("thumbnails/Shadow-Guy-Shrugging.jpg"))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                elif str(type(e1)) == "<class 'FileNotFoundError'>":
-                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/exclamation.jpg")))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-        else: # if online thumbs is true
+        try:
             curItem = treeview.focus().strip('#')
-            with open("images_url_dict.json", "r") as f:
-                imgs_dict = json.load(f)
-
             name = "-".join(curItem.lower().split())
-            img_list = imgs_dict[name]
-            img_url = img_list[0]
-            try:
-                """try to make temp file"""
-                os.mkdir("/Windows/Temp/tv_series_temp_thumbs")
+
+            local_image_path = series_dict[curItem][2]
+
+            if jep.get() == 0:  # online thumbs is false
                 try:
-                    """try to load image without downloding"""
-                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                    """ 1st try to load image from local thumbs directory """
+                    # image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/Shadow-Guy-Shrugging.jpg")))
+                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(local_image_path)))
                     Label.image = image
                     preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                except FileNotFoundError:
-                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                    if r.status_code == 200:
-                        with open(imageProcessor.resize_image(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))), 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-                    print("Done downloading")
+                except Exception as e1:
+                    print(type(e1), e1)
+                    if str(type(e1)) == "<class 'PermissionError'>":
+                        image = ImageTk.PhotoImage(Image.open("thumbnails/Shadow-Guy-Shrugging.jpg"))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                    elif str(type(e1)) == "<class 'FileNotFoundError'>":
+                        image = ImageTk.PhotoImage(
+                            Image.open(imageProcessor.resize_image("thumbnails/exclamation.jpg")))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+            else:  # if online thumbs is true
+                curItem = treeview.focus().strip('#')
+                with open("images_url_dict.json", "r") as f:
+                    imgs_dict = json.load(f)
 
-                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            except FileExistsError:
-                """if dir already available"""
+                name = "-".join(curItem.lower().split())
+                img_list = imgs_dict[name]
+                img_url = img_list[0]
                 try:
-                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                except FileNotFoundError:
-                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                    if r.status_code == 200:
-                        with open(imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)), 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-                    print("Done downloading")
+                    """try to make temp file"""
+                    os.mkdir("/Windows/Temp/tv_series_temp_thumbs")
+                    try:
+                        """try to load image without downloding"""
+                        image = ImageTk.PhotoImage(Image.open(
+                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                    except FileNotFoundError:
+                        r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                        if r.status_code == 200:
+                            with open(imageProcessor.resize_image(imageProcessor.resize_image(
+                                    "/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))), 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                        print("Done downloading")
 
-                    image = ImageTk.PhotoImage(Image.open("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                        image = ImageTk.PhotoImage(Image.open(
+                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                except FileExistsError:
+                    """if dir already available"""
+                    try:
+                        image = ImageTk.PhotoImage(Image.open(
+                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                    except FileNotFoundError:
+                        r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                        if r.status_code == 200:
+                            with open(imageProcessor.resize_image(
+                                    "/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)), 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                        print("Done downloading")
 
+                        image = ImageTk.PhotoImage(
+                            Image.open("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+        except Exception as e:
+            print("nothing to show...")
 
     def selectitem_options(event):
         """call back function when right click on an item"""
+        curItem = treeview.focus().strip('#')
 
         def delete():
             """delete the selected item"""
@@ -224,19 +236,41 @@ def main():
                 edittop.geometry("400x200+200+300")
                 edittop.title("Edit properties of {} ".format(curitem).upper())
 
-        def watch():
+        def complete():
+            curitem = treeview.focus().strip("#")
+            select_values = series_dict[curitem]
+
+            with open("Other_title_categories.json", "r") as other_categories_fo:
+                other_cat_data = json.load(other_categories_fo)["complete"]
+
+                print(curitem)
+                print(other_cat_data)
+
+        def watch_online():
             curItem = treeview.focus().strip('#')
+            prefered_site = watch_site_var.get()
 
-            print('watch {}'.format(curItem))
+            print('watch {} using the site {}'.format(curItem, prefered_site))
 
-            webbrowser.open_new_tab('http://fmovies.pm/search-movies/{}.html'.format(curItem))
+            if prefered_site == "Fmovies":
+                webbrowser.open_new_tab("http://fmovies.pm/search-movies/{}.html".format(curItem))
+            elif prefered_site == "IO-Movies":
+                webbrowser.open_new_tab("https://www.iomovies.to/search?q={}".format(curItem))
+            elif prefered_site == "Putlocker":
+                webbrowser.open_new_tab("http://putlockers.am/search-movies/{}.html".format(curItem))
+            else:
+                webbrowser.open_new_tab("http://fmovies.pm/search-movies/{}.html".format(curItem))
 
         def download_it():
             curItem = treeview.focus().strip('#')
+            prefered_site = donwload_site_var.get()
 
-            print('download {}'.format(curItem))
+            print('download {} from the site {}'.format(curItem, prefered_site))
 
-            webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
+            if prefered_site == "EZTV":
+                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
+            elif prefered_site == "Torrentcouch":
+                webbrowser.open_new_tab("https://torrentcouch.net/?s={}".format(curItem))
 
         def view_thumbnail():
             curItem = treeview.focus().strip('#')
@@ -292,17 +326,34 @@ def main():
 
             webbrowser.open_new_tab("https://www.youtube.com/results?search_query={}".format(curItem))
 
+        def view_details():
+            curitem = treeview.focus().strip("#")
+
+            with open("images_url_dict.json", "r") as f23:
+                imgs_dict = json.load(f23)
+            name = "-".join(curitem.lower().split())
+
+            url, title, ID = imgs_dict[name]
+
+            webbrowser.open_new_tab("https://eztv.io/shows/{}/{}/".format(ID, title))
+
+        # right-click menu
+
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_command(label='Edit', command=edit)
-        popup_menu.add_command(label="Complete")
+        popup_menu.add_command(label="Complete", command=complete)
         popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
         popup_menu.add_separator()
         popup_menu.add_command(label="Watch Trailer", command=watch_trailler)
-        popup_menu.add_command(label="Watch Online", command=watch)
+        popup_menu.add_command(label="Watch Online", command=watch_online)
         popup_menu.add_command(label='Download', command=download_it)
+        popup_menu.add_command(label="View Details", command=view_details)
 
-        popup_menu.post(event.x_root, event.y_root)
+        if curItem == "":
+            print("add some items my friend...")
+        else:
+            popup_menu.post(event.x_root, event.y_root)
 
 
     mainWindow = Tk()
@@ -320,6 +371,10 @@ def main():
     signed_inlb_var = StringVar()
     auto_refresh_var = BooleanVar()
     jep = BooleanVar()
+    watch_site_var = StringVar()
+    watch_site_var.set("Fmovies")  # set default "watch online " site
+    donwload_site_var = StringVar()
+    donwload_site_var.set("EZTV")  # set default "download" site
 
     try:
         signed_inlb_var.set('Signed in as {}'.format(gitup.get_user()))
@@ -330,10 +385,32 @@ def main():
 
     menubar = Menu(mainWindow)
 
+    # watch_menu functions
+
+    def set_watch_site(w_site):
+        print(w_site)
+        watch_site_var.set(w_site)
+
+    def set_download_site(d_site):
+        print(d_site)
+        donwload_site_var.set(d_site)
+
+    watchsite_menu = Menu(tearoff=0)
+    watchsite_menu.add_radiobutton(label="  Fmovies  ", background="white", foreground="black", command=lambda: set_watch_site("Fmovies"))
+    watchsite_menu.add_radiobutton(label="  IO-Movies  ", background="white", foreground="black", command=lambda: set_watch_site("IO-Movies"))
+    watchsite_menu.add_radiobutton(label="  Putlocker  ", background="white", foreground="black", command=lambda: set_watch_site("Putlocker"))
+
+    doenloadsite_menu = Menu(tearoff=0)
+    doenloadsite_menu.add_radiobutton(label="  EZTV  ", background="white", foreground="black", command=lambda: set_download_site("EZTV"))
+    doenloadsite_menu.add_radiobutton(label=" Torrentcouch", background="white", foreground="black", command=lambda: set_download_site("Torrentcouch"))
+
     filemenu = Menu(tearoff=0)
     filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
-    filemenu.add_command(label='Push', command=lambda: gitup.push_up())
-    filemenu.add_command(label='Pull', command=lambda: gitup.pull_down())
+    filemenu.add_command(label='Push My Data', command=lambda: gitup.push_up())
+    filemenu.add_command(label='Pull My Data', command=lambda: gitup.pull_down())
+    filemenu.add_separator()
+    filemenu.add_cascade(label="Watching Sites", menu=watchsite_menu)
+    filemenu.add_cascade(label="Download Sites", menu=doenloadsite_menu)
 
     options_menu = Menu(tearoff=0)
     options_menu.add_command(label='update list', command=refresh)
@@ -365,7 +442,6 @@ def main():
 
     addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white", fg="black")
 
-
     # Packing Widgets
 
     signed_inlb.place(x=10, y=3)
@@ -377,6 +453,9 @@ def main():
     searchbut.place(x=242, y=60)
 
     addbut.place(x=65, y=115)
+
+    # canv = Canvas(mainWindow, bg="red")
+    # canv.pack(side=TOP, fill=X)
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")

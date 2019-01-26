@@ -22,15 +22,6 @@ def convert_format(image_file):
 
     return image_file_new
 
-
-    # The file format of the source file.
-    # print(im.format)
-    # The pixel format used by the image. Typical values are “1”, “L”, “RGB”, or “CMYK.”
-    # print(im.mode)
-    # Image size, in pixels. The size is given as a 2-tuple (width, height).
-    # print(im.size)
-
-
 def resize_image(image_file):
 
     size = 238, 317   # size in pixels

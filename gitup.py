@@ -6,16 +6,15 @@ import json
 import checker
 
 with open("details.json", "r") as f:
-    data = json.load(f)
+    details_data = json.load(f)
 try:
-    _pass = checker.decoder(data["pas"])
+    _pass = checker.decoder(details_data["pas"])
 except ValueError :
     _pass = ''
 
-use = data["use"]
+use = details_data["use"]
 
 g = Github(use, _pass, timeout=10)
-
 
 
 def signin(username, password):
@@ -50,91 +49,151 @@ def push_up():
 
     if q == 'yes':
 
-        with open('series_table.json') as f:  # initial reading of json data for series
-            data = f.read()
+        global g
 
-        signin(use, _pass)
+        with open('series_table.json') as series_fo:  # initial reading of json data for series
+            series_data = series_fo.read()
+        with open("details.json") as details_fo:
+            cur_details_data = details_fo.read()
 
         try:
-            """try to create a new repo called tv series data"""
-            user = g.get_user()
-            repo = user.create_repo('Tv-series-data')
+            """try to update series and details json files in the tv-series-data repo"""
+            print("initial try to push necessary file")
+            user = g.get_user().login
+            repo = g.get_repo("{}/Tv-series-data".format(user))
+            # work on series table
+            print("pushing seriaes table")
+            series_json_content = repo.get_file_contents("series_table.json")
+            repo.update_file("series_table.json", "update", str(series_data), sha=series_json_content.sha)
+            # work on details json
+            print("pushing details file")
+            details_json_content = repo.get_file_contents("details.json")
+            repo.update_file("details.json", "update", str(cur_details_data), sha=details_json_content.sha)
+
+            print("done pushung\n")
+            print("done all operations \n")
+            messagebox.showinfo("DONE", 'DONE UPLOADING THE SERIES FILE')
         except Exception as e:
+            e = literal_eval(str(e).strip('1234567890').strip())['message']
+            if e == "Requires authentication":
+                print("Login first")
+                messagebox.showerror("LOGING CREDENTIALS ERROR", "Try And Log-In or Sign-In To Upload Your Data To Your Account".title())
 
-            e = literal_eval(str(e).strip('1234567890').strip())['errors'][0]['message']
-            if e == 'name already exists on this account':
-
+            elif e == "Not Found":
                 try:
-                    """now try and create the json file"""
-                    u = g.get_user().login
-                    repo = g.get_repo("{}/Tv-series-data".format(u))
-                    repo.create_file("series_table.json", "test", data, branch="test")
-                except Exception:
+                    print("Not found exception")
+                    user_login = g.get_user().login
+                    user = g.get_user()
+                    # create the repo and files with basic content
+                    print("cerating TV-series-data repo for user : {}".format(user_login))
+                    repo = user.create_repo("Tv-series-data")  # creating the new repo
+                    print("repo now created as :: {}\nNow creatin files details and series table".format(repo.full_name))
+                    repo.create_file("series_table.json", "First creation of files", series_data)  # create the series_table json
+                    repo.create_file("details.json", "First creation of files", cur_details_data)  # create the details json
+                    print("done")
 
-                    try:
-                        repo = g.get_repo("{}/Tv-series-data".format(u))
-                        contents = repo.get_contents("series_table.json")
-                        repo.update_file(contents.path, "more tests", data, contents.sha, branch="test")
-                    except Exception:
-                        pass
+                    print("done all operations \n")
+                except Exception as e2:
+                    e2 = literal_eval(str(e2).strip('1234567890').strip())["errors"][0]
+                    if (e2["resource"] == "Repository") and (e2["message"] == "name already exists on this account"):
+                        print("repo exists,now inside e2")
+                        user = g.get_user().login
+                        # create the repo and files with basic content
+                        repo = g.get_repo("{}/Tv-series-data".format(user))
+                        print("Now creatin files details and series table")
+                        try:
+                            """create only the json files"""
+                            repo.create_file("series_table.json", "First creation of files", series_data)  # create the series_table json
+                            repo.create_file("details.json", "First creation of files", cur_details_data)  # create the details json
+                            print("done")
+                            print("done all operations \n")
+                        except:
+                            try:
+                                """now create ony series table"""
+                                repo.create_file("series_table.json", "First creation of files", series_data)  # create the series_table json
+                                print("done")
+                                print("done configuring files and uploading\n")
+                            except:
+                                """now create only deatils json"""
+                                repo.create_file("details.json", "First creation of files", cur_details_data)  # create the details json
+                                print("done")
+                                print("done all operations \n")
+                    else:
+                        print("else exception : {}".format(e2))
 
-        messagebox.showinfo("DONE", 'DONE UPLOADING THE SERIES FILE')
+            else:
+                print("exception error :: " + e)
 
     elif q == 'no':
-
         print('no push')
 
     else:
-
         pass
 
 
 def pull_down():
     """call back function that pulls available json list from github"""
+    with open("details.json", "r") as pull_f:
+        pull_details_data = json.load(pull_f)
 
-    with open('series_table.json') as f:  # initial reading of json data for series
-        data = f.read()
-
-    q = messagebox.askquestion("QUESTION", "ARE YOU SURE YOU WANT TO MAKE THESE CHANGES PERMANENT")
+    q = messagebox.askquestion("QUESTION", "DO YOU WANT TO\n PROCEED WITH THE DOWNLOAD")
 
     if q == 'yes':
-
-        signin(use, _pass)
+        signin(pull_details_data["use"], checker.decoder(pull_details_data["pas"]))  # SIGN IN TO GITHUB USING STORED USER CREDENTIALS
 
         try:
-            """try to create a new repo called tv series data"""
-            user = g.get_user()
-            repo = user.create_repo('Tv-series-data')
+            """try to downlaod "details" and "series_table" json files from tv series data"""
+            user = g.get_user().login
+            repo = g.get_repo("{}/Tv-series-data".format(user))
+            details_contents = repo.get_file_contents("details.json")
+            details_contents_url = details_contents.download_url
+            tv_series_contents = repo.get_file_contents("series_table.json")
+            tv_series_contents_url = tv_series_contents.download_url
+
+            print("downloading files")
+            urllib.request.urlretrieve(tv_series_contents_url, filename="series_table.json")
+            urllib.request.urlretrieve(details_contents_url, filename="details.json")
+
+            print("\nunder normal loop")
+            print("done all operations")
         except Exception as e:
+            e = literal_eval(str(e).strip('1234567890').strip())['message']
+            if e == "Not Found":  # if The Tv-series-data repo doesent exist create one and add necessary json files
+                print("Not found exception")
+                user_login = g.get_user().login
+                user = g.get_user()
+                # create the repo and files with basic content
+                print("cerating TV-series-data repo for user : {}".format(user_login))
+                repo = user.create_repo("Tv-series-data")  # creating the new repo
+                print("repo now created as :: {}\nNow creatin files details and series table".format(repo.full_name))
+                repo.create_file("series_table.json", "First creation of files", "{}")  # create the series_table json
+                repo.create_file("details.json", "First creation of files", "{\"use\": \"\", \"pas\": [], \"state\": \"False\"}")  # create the series_table json
+                print("done")
+                # download the files
+                details_contents = repo.get_file_contents("details.json")
+                details_contents_url = details_contents.download_url
+                tv_series_contents = repo.get_file_contents("series_table.json")
+                tv_series_contents_url = tv_series_contents.download_url
 
-            try:
-                """now try and create the json file"""
-                u = g.get_user().login
-                repo = g.get_repo("{}/Tv-series-data".format(u))
-                repo.create_file("series_table.json", "test", data, branch="test")
-            except Exception:
-                try:
-                    """download the json file"""
+                # downloading the files
+                print("downloading files")
+                urllib.request.urlretrieve(tv_series_contents_url, filename="series_table.json")
+                urllib.request.urlretrieve(details_contents_url, filename="details.json")
 
-                    u = g.get_user().login  # login username
-                    repo = g.get_repo("{}/Tv-series-data".format(u))
-                    file_contents = repo.get_file_contents('series_table.json')
+                print("\nunder not found repo")
+                print("done all operations")
 
-                    url = file_contents.download_url
-                    urllib.request.urlretrieve(url, 'series_table.json')
-
-                    messagebox.showinfo("DONE", 'DONE DOWNLOADING THE SERIES FILE')
-
-                except Exception as e:
-                    print(e)
-                    messagebox.showerror("ERROR DOWNLOADING", "PLEASE CHECK YOUR INTERNET CONNECTION ")
+                messagebox.showinfo("INFO", "DONE DOWNLOADING FILES")
+            else:
+                if e == "Requires authentication":
+                    print("Login first")
+                    messagebox.showerror("LOGING CREDENTIALS ERROR", "Try And Log-In or Sign-In To Upload Your Data To Your Account".title())
+                else:
+                    print("else statement exception :: {}".format(e))
 
     elif q == 'no':
-
-        print('no push')
-
+        print('no pull')
     else:
-
         pass
 
 
