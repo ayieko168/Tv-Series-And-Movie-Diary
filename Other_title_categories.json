@@ -1,6 +1,18 @@
 {
-  "complete" : {},
-  "on_break" : {},
-  "wish_list" : {},
-  "movies" : {}
+  "complete": {
+    "Vikings": [
+      5,
+      10,
+      "thumbnails/vikings.jpg",
+      "2019-01-12 05:43:25.082905"
+    ],
+    "Taboo": [
+      1,
+      10,
+      "thumbnails/taboo.jpg",
+      "2019-01-12 05:43:02.242873"
+    ]
+  },
+  "wish_list": {},
+  "movies": {}
 }

@@ -241,10 +241,24 @@ def main():
             select_values = series_dict[curitem]
 
             with open("Other_title_categories.json", "r") as other_categories_fo:
-                other_cat_data = json.load(other_categories_fo)["complete"]
+                other_file_data = json.load(other_categories_fo)
+                complete_data = other_file_data["complete"]
+                complete_data[curitem] = select_values  # add the selected title to "complete"
+            with open("Other_title_categories.json", "w") as other_categories_fo2:
+                json.dump(other_file_data, other_categories_fo2, indent=2)  # write the edited complete to the file
 
-                print(curitem)
-                print(other_cat_data)
+            print("done writing change to other json file")
+
+            treeview.delete("#{}".format(curitem))
+
+            with open("series_table.json", "r") as series_fo:
+                series_fo_data = json.load(series_fo)
+                del series_fo_data[curitem]
+
+            with open("series_table.json", "w") as series_fo2:
+                json.dump(series_fo_data, series_fo2, indent=2) # write the edited complete to the file
+
+            print("done writing change to series json file\n")
 
         def watch_online():
             curItem = treeview.focus().strip('#')
@@ -340,10 +354,10 @@ def main():
         # right-click menu
 
         popup_menu = Menu(tearoff=0)
-        popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_command(label='Edit', command=edit)
         popup_menu.add_command(label="Complete", command=complete)
         popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
+        popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_separator()
         popup_menu.add_command(label="Watch Trailer", command=watch_trailler)
         popup_menu.add_command(label="Watch Online", command=watch_online)
@@ -354,7 +368,6 @@ def main():
             print("add some items my friend...")
         else:
             popup_menu.post(event.x_root, event.y_root)
-
 
     mainWindow = Tk()
 
@@ -383,7 +396,7 @@ def main():
 
     # tkinter main menu bar
 
-    menubar = Menu(mainWindow)
+    menubar = Menu(mainWindow, font=(11))
 
     # watch_menu functions
 
@@ -394,6 +407,51 @@ def main():
     def set_download_site(d_site):
         print(d_site)
         donwload_site_var.set(d_site)
+
+    def view_complete():
+
+        global treeview2
+
+        treeview.forget()
+
+        with open("Other_title_categories.json", "r") as other_fo:
+            other_fo_data = json.load(other_fo)["complete"]
+
+            print(other_fo_data)
+
+        try:
+
+
+            treeview2 = ttk.Treeview(mainWindow)
+
+            treeview2.config(columns=('sn', 'ep'))
+            treeview2.column('#0', width=150, anchor=CENTER)
+            treeview2.column('sn', width=60, anchor=CENTER)
+            treeview2.column('ep', width=60, anchor=CENTER)
+
+            treeview2.heading('#0', text='Name')
+            treeview2.heading('sn', text='Season')
+            treeview2.heading('ep', text='Episode')
+
+            for k, v in sorted(other_fo_data.items()):
+                treeview2.insert('', END, '#{}'.format(k), text=k)
+                treeview2.set('#{}'.format(k), 'sn', v[0])
+                treeview2.set('#{}'.format(k), 'ep', v[1])
+
+            treeview2.pack(side=RIGHT, fill=Y)
+
+        except Exception as e2:
+            print(e2)
+
+    def view_movies():
+
+        try:
+            treeview2.forget()
+
+            treeview.pack(side=RIGHT, fill=Y)
+        except Exception as e3:
+
+            print(e3)
 
     watchsite_menu = Menu(tearoff=0)
     watchsite_menu.add_radiobutton(label="  Fmovies  ", background="white", foreground="black", command=lambda: set_watch_site("Fmovies"))
@@ -418,8 +476,13 @@ def main():
     options_menu.add_command(label="Account Login", command=LogIn.login_UI)
     options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var, command=lambda: print(auto_refresh_var.get()))
 
+    view_menu = Menu(tearoff=0)
+    view_menu.add_command(label="view completed movies", command=view_complete)
+    view_menu.add_command(label="view current movies", command=view_movies)
+
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
+    menubar.add_cascade(label="View", menu=view_menu)
 
     # Widgets
 
