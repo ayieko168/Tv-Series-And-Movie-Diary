@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="cb3cf17f-f40c-45b4-80d9-680da972293a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Other_title_categories.json" beforeDir="false" afterPath="$PROJECT_DIR$/Other_title_categories.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ayieko168-data/Tv-series-data" beforeDir="false" afterPath="$PROJECT_DIR$/ayieko168-data/Tv-series-data" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ayieko168-data/Tv-series-data/series_table.json" beforeDir="false" afterPath="$PROJECT_DIR$/ayieko168-data/Tv-series-data/series_table.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/details.json" beforeDir="false" afterPath="$PROJECT_DIR$/details.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gitup.py" beforeDir="false" afterPath="$PROJECT_DIR$/gitup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/new.py" beforeDir="false" afterPath="$PROJECT_DIR$/new.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/series_table.json" beforeDir="false" afterPath="$PROJECT_DIR$/series_table.json" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="129">
+              <caret line="724" column="28" lean-forward="true" selection-start-line="724" selection-start-column="28" selection-end-line="724" selection-end-column="28" />
+              <folding>
+                <element signature="e#329#436#0" />
+                <element signature="e#467#655#0" />
+                <element signature="e#876#897#0" />
+                <element signature="e#963#1017#0" />
+                <element signature="e#958#1238#0" />
+                <element signature="e#975#1189#0" />
+                <element signature="e#1024#1189#0" />
+                <element signature="e#1275#1616#0" />
+                <element signature="e#1649#6323#0" />
+                <element signature="e#1734#6252#0" />
+                <element signature="e#1955#3174#0" />
+                <element signature="e#1980#2409#0" />
+                <element signature="e#2470#3174#0" />
+                <element signature="e#2583#2805#0" />
+                <element signature="e#2903#3174#0" />
+                <element signature="e#3237#6252#0" />
+                <element signature="e#3561#4971#0" />
+                <element signature="e#3706#4073#0" />
+                <element signature="e#4144#4971#0" />
+                <element signature="e#4299#4595#0" />
+                <element signature="e#4507#4595#0" />
+                <element signature="e#5032#6252#0" />
+                <element signature="e#5112#5412#0" />
+                <element signature="e#5483#6252#0" />
+                <element signature="e#5638#5905#0" />
+                <element signature="e#5817#5905#0" />
+                <element signature="e#6368#17538#0" />
+                <element signature="e#6502#6778#0" />
+                <element signature="e#6812#10432#0" />
+                <element signature="e#7007#8505#0" />
+                <element signature="e#7141#7404#0" />
+                <element signature="e#7480#7743#0" />
+                <element signature="e#7821#8109#0" />
+                <element signature="e#8210#8470#0" />
+                <element signature="e#8593#10432#0" />
+                <element signature="e#10656#10859#0" />
+                <element signature="e#11251#11332#0" />
+                <element signature="e#11615#11619#0" />
+                <element signature="e#11607#12324#0" />
+                <element signature="e#12365#12802#0" />
+                <element signature="e#12846#14034#0" />
+                <element signature="e#13142#13822#0" />
+                <element signature="e#13313#13473#0" />
+                <element signature="e#13393#13473#0" />
+                <element signature="e#13899#13974#0" />
+                <element signature="e#14079#14973#0" />
+                <element signature="e#14618#14744#0" />
+                <element signature="e#14667#14744#0" />
+                <element signature="e#15017#15158#0" />
+                <element signature="e#15200#15526#0" />
+                <element signature="e#17805#18224#0" />
+                <element signature="e#18468#20183#0" />
+                <element signature="e#18508#18512#0" />
+                <element signature="e#18571#19682#0" />
+                <element signature="e#18632#18636#0" />
+                <element signature="e#18809#19243#0" />
+                <element signature="e#17278#17326#0" />
+                <element signature="e#17371#17422#0" />
+                <element signature="e#18871#23684#0" />
+                <element signature="e#17533#18866#0" />
+                <element signature="e#18951#19288#0" />
+                <element signature="e#19335#20799#0" />
+                <element signature="e#20845#22292#0" />
+                <element signature="e#19417#21035#0" />
+                <element signature="e#19586#20127#0" />
+                <element signature="e#23104#23183#0" />
+                <element signature="e#25408#25445#0" />
+                <element signature="e#25741#25812#0" />
+                <element signature="e#25764#25799#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/new.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="508">
+              <caret line="62" selection-start-line="62" selection-end-line="62" selection-end-column="63" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Other_title_categories.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret line="109" column="1" lean-forward="true" selection-start-line="109" selection-start-column="1" selection-end-line="109" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/gitup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="125" column="64" selection-start-line="125" selection-start-column="64" selection-end-line="125" selection-end-column="64" />
+              <folding>
+                <element signature="e#0#30#0" expanded="true" />
+                <element signature="e#396#440#0" />
+                <element signature="e#467#543#0" />
+                <element signature="e#567#619#0" />
+                <element signature="e#6045#9857#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>login_window</find>
+      <find>add_window</find>
+      <find>treeview2</find>
+      <find>complete_tereeview</find>
+      <find>wishlist_treeview</find>
+      <find>selectitem_options</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>wishlist_window</replace>
+      <replace>add_wishlist_window</replace>
+      <replace>complete_tereeview</replace>
+      <replace>wishlist_treeview</replace>
+      <replace>onbreak_topview</replace>
+      <replace>onbreak_treeview</replace>
+      <replace>selectitem_options_main</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/add_movie.py" />
+        <option value="$PROJECT_DIR$/Other_title_categories.json" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/new.py" />
+        <option value="$PROJECT_DIR$/gitup.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="10" />
+    <option name="y" value="48" />
+    <option name="width" value="1300" />
+    <option name="height" value="670" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Tv-Series-And-Movie-Diary" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Tv-Series-And-Movie-Diary" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.main">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Tv-Series-And-Movie-Diary" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="new" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Tv-Series-And-Movie-Diary" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+        <item itemvalue="Python.new" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cb3cf17f-f40c-45b4-80d9-680da972293a" name="Default Changelist" comment="" />
+      <created>1549546291480</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1549546291480</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1296" height="1000" extended-state="7" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.09062003" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.15207373" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/add_movie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="37" column="111" lean-forward="true" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="111" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LogIn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="17" column="39" selection-start-line="14" selection-start-column="4" selection-end-line="17" selection-end-column="39" />
+          <folding>
+            <element signature="e#572#1258#0" />
+            <element signature="e#1288#1617#0" />
+            <element signature="e#1645#3274#0" />
+            <element signature="e#3304#3779#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Other_title_categories.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="109" column="1" lean-forward="true" selection-start-line="109" selection-start-column="1" selection-end-line="109" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="508">
+          <caret line="62" selection-start-line="62" selection-end-line="62" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="129">
+          <caret line="724" column="28" lean-forward="true" selection-start-line="724" selection-start-column="28" selection-end-line="724" selection-end-column="28" />
+          <folding>
+            <element signature="e#329#436#0" />
+            <element signature="e#467#655#0" />
+            <element signature="e#876#897#0" />
+            <element signature="e#963#1017#0" />
+            <element signature="e#958#1238#0" />
+            <element signature="e#975#1189#0" />
+            <element signature="e#1024#1189#0" />
+            <element signature="e#1275#1616#0" />
+            <element signature="e#1649#6323#0" />
+            <element signature="e#1734#6252#0" />
+            <element signature="e#1955#3174#0" />
+            <element signature="e#1980#2409#0" />
+            <element signature="e#2470#3174#0" />
+            <element signature="e#2583#2805#0" />
+            <element signature="e#2903#3174#0" />
+            <element signature="e#3237#6252#0" />
+            <element signature="e#3561#4971#0" />
+            <element signature="e#3706#4073#0" />
+            <element signature="e#4144#4971#0" />
+            <element signature="e#4299#4595#0" />
+            <element signature="e#4507#4595#0" />
+            <element signature="e#5032#6252#0" />
+            <element signature="e#5112#5412#0" />
+            <element signature="e#5483#6252#0" />
+            <element signature="e#5638#5905#0" />
+            <element signature="e#5817#5905#0" />
+            <element signature="e#6368#17538#0" />
+            <element signature="e#6502#6778#0" />
+            <element signature="e#6812#10432#0" />
+            <element signature="e#7007#8505#0" />
+            <element signature="e#7141#7404#0" />
+            <element signature="e#7480#7743#0" />
+            <element signature="e#7821#8109#0" />
+            <element signature="e#8210#8470#0" />
+            <element signature="e#8593#10432#0" />
+            <element signature="e#10656#10859#0" />
+            <element signature="e#11251#11332#0" />
+            <element signature="e#11615#11619#0" />
+            <element signature="e#11607#12324#0" />
+            <element signature="e#12365#12802#0" />
+            <element signature="e#12846#14034#0" />
+            <element signature="e#13142#13822#0" />
+            <element signature="e#13313#13473#0" />
+            <element signature="e#13393#13473#0" />
+            <element signature="e#13899#13974#0" />
+            <element signature="e#14079#14973#0" />
+            <element signature="e#14618#14744#0" />
+            <element signature="e#14667#14744#0" />
+            <element signature="e#15017#15158#0" />
+            <element signature="e#15200#15526#0" />
+            <element signature="e#17805#18224#0" />
+            <element signature="e#18468#20183#0" />
+            <element signature="e#18508#18512#0" />
+            <element signature="e#18571#19682#0" />
+            <element signature="e#18632#18636#0" />
+            <element signature="e#18809#19243#0" />
+            <element signature="e#17278#17326#0" />
+            <element signature="e#17371#17422#0" />
+            <element signature="e#18871#23684#0" />
+            <element signature="e#17533#18866#0" />
+            <element signature="e#18951#19288#0" />
+            <element signature="e#19335#20799#0" />
+            <element signature="e#20845#22292#0" />
+            <element signature="e#19417#21035#0" />
+            <element signature="e#19586#20127#0" />
+            <element signature="e#23104#23183#0" />
+            <element signature="e#25408#25445#0" />
+            <element signature="e#25741#25812#0" />
+            <element signature="e#25764#25799#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gitup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="125" column="64" selection-start-line="125" selection-start-column="64" selection-end-line="125" selection-end-column="64" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#396#440#0" />
+            <element signature="e#467#543#0" />
+            <element signature="e#567#619#0" />
+            <element signature="e#6045#9857#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

@@ -60,7 +60,6 @@
 #
 # print(get_credentials())
 #
-
-
+{"complete": {}, "wish_list": {}, "movies": {}, "on_break": {}}
 
 

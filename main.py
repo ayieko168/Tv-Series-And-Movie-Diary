@@ -32,20 +32,23 @@ series_dict = data
 
 
 def main():
-
     print('starting within')
     with open('series_table.json') as f:  # initial reading of json data for series
         series_dict = json.load(f)
-    # with open("details.json", "r") as f:
-    #     details_data = json.load(f)
-    #
-    # gitup.signin(details_data["use"], checker.decoder(details_data["pas"]))
 
     global mainWindow, treeview
 
     # main tkinter window
 
     # Tkinter Functions
+
+    def search():
+
+        search_item = searchent.get()
+        searchent.delete(0, END)
+
+        print("This feature is not available yet")
+
     def list_movies(lis):
 
         try:
@@ -147,8 +150,8 @@ def main():
         except Exception as e:
             print("nothing to show...")
 
-    def selectitem_options(event):
-        """call back function when right click on an item"""
+    def selectitem_options_main(event):
+        """call back function when right click on an item on the main tree-view"""
         curItem = treeview.focus().strip('#')
 
         def delete():
@@ -256,7 +259,34 @@ def main():
                 del series_fo_data[curitem]
 
             with open("series_table.json", "w") as series_fo2:
-                json.dump(series_fo_data, series_fo2, indent=2) # write the edited complete to the file
+                json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
+
+            print("done writing change to series json file\n")
+
+        def onbreak():
+
+            curitem = treeview.focus().strip("#")
+
+            # add selected item to others onbreak json file
+            with open("Other_title_categories.json", "r") as other_categories_fo:
+                other_file_data = json.load(other_categories_fo)
+                onbraek_data = other_file_data["on_break"]
+                onbraek_data[curitem] = [0, 0, "NO Preview", "{}".format(datetime.datetime.now().date())]  # add the selected title to "complete"
+            with open("Other_title_categories.json", "w") as other_categories_fo2:
+                json.dump(other_file_data, other_categories_fo2, indent=2)  # write the edited complete to the file
+
+            print("done writing change to other json file")
+
+            # remove selected item from main treeview
+            treeview.delete("#{}".format(curitem))
+
+            # remove selected item from series dict
+            with open("series_table.json", "r") as series_fo:
+                series_fo_data = json.load(series_fo)
+                del series_fo_data[curitem]
+
+            with open("series_table.json", "w") as series_fo2:
+                json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
 
             print("done writing change to series json file\n")
 
@@ -306,10 +336,10 @@ def main():
                 # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            except KeyError :
+            except KeyError:
                 print("key error")
-            #restart_but_img = ImageTk.PhotoImage(Image.open("icons/reload_32px.png"))
-            #webbrowser.open_new_tab('{}'.format(curItem))
+            # restart_but_img = ImageTk.PhotoImage(Image.open("icons/reload_32px.png"))
+            # webbrowser.open_new_tab('{}'.format(curItem))
 
         def download_thumb():
 
@@ -356,6 +386,7 @@ def main():
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Edit', command=edit)
         popup_menu.add_command(label="Complete", command=complete)
+        popup_menu.add_command(label="On Break", command=onbreak)
         popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
         popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_separator()
@@ -369,10 +400,85 @@ def main():
         else:
             popup_menu.post(event.x_root, event.y_root)
 
-    mainWindow = Tk()
+    def wishlist_selectitem_options(event):
 
-    screen_height = mainWindow.winfo_screenheight()
-    screen_width = mainWindow.winfo_screenwidth()
+        curItem = wishlist_treeview.focus().strip('#')
+
+        popup_menu = Menu(tearoff=0)
+        popup_menu.add_command(label='Edit')
+        popup_menu.add_command(label="Complete")
+        popup_menu.add_command(label="On Break")
+        popup_menu.add_command(label="View Thumbnail")
+        popup_menu.add_command(label='Delete')
+
+        if curItem == "":
+            print("add some items my friend...")
+        else:
+            popup_menu.post(event.x_root, event.y_root)
+
+    def onbreak_selectitem_options(event):
+
+        def restore():
+
+            pass
+
+        def complete():
+            curitem = onbreak_treeview.focus().strip("#")
+            select_values = series_dict[curitem]
+
+            # with open("Other_title_categories.json", "r") as other_categories_fo:
+            #     other_file_data = json.load(other_categories_fo)
+            #     complete_data = other_file_data["complete"]
+            #     complete_data[curitem] = select_values  # add the selected title to "complete"
+            # with open("Other_title_categories.json", "w") as other_categories_fo2:
+            #     json.dump(other_file_data, other_categories_fo2, indent=2)  # write the edited complete to the file
+            #
+            # print("done writing change to other json file")
+            #
+            # onbreak_treeview.delete("#{}".format(curitem))
+            #
+            # with open("series_table.json", "r") as series_fo:
+            #     series_fo_data = json.load(series_fo)
+            #     del series_fo_data[curitem]
+            #
+            # with open("series_table.json", "w") as series_fo2:
+            #     json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
+            #
+            # print("done writing change to series json file\n")
+
+        def delete():
+
+            pass
+
+        curItem = onbreak_treeview.focus().strip('#')
+
+        popup_menu = Menu(tearoff=0)
+        popup_menu.add_command(label='Restore', command=restore)
+        popup_menu.add_command(label="Complete", commadn=complete)
+        popup_menu.add_separator()
+        popup_menu.add_command(label='Delete', command=delete)
+
+        if curItem == "":
+            print("add some items my friend...")
+        else:
+            popup_menu.post(event.x_root, event.y_root)
+
+    def complete_selectitem_options(event):
+
+        curItem = complete_tereeview.focus().strip('#')
+
+        popup_menu = Menu(tearoff=0)
+        popup_menu.add_command(label='Edit')
+        popup_menu.add_command(label="Complete")
+        popup_menu.add_command(label=" It worked for complete")
+        popup_menu.add_command(label='Delete')
+
+        if curItem == "":
+            print("add some items my friend...")
+        else:
+            popup_menu.post(event.x_root, event.y_root)
+
+    mainWindow = Tk()
 
     # Tkinter Variables
     searchentvar = StringVar()
@@ -382,7 +488,6 @@ def main():
     editent2var = StringVar()
     editent2var.set("image")
     signed_inlb_var = StringVar()
-    auto_refresh_var = BooleanVar()
     jep = BooleanVar()
     watch_site_var = StringVar()
     watch_site_var.set("Fmovies")  # set default "watch online " site
@@ -408,81 +513,244 @@ def main():
         print(d_site)
         donwload_site_var.set(d_site)
 
-    def view_complete():
+    def change_view(what):
 
-        global treeview2
+        if (what == "complete") and (view_compl_var.get() == False):
+            print("view complete list")
 
-        treeview.forget()
+            # the function
+            global complete_tereeview
 
-        with open("Other_title_categories.json", "r") as other_fo:
-            other_fo_data = json.load(other_fo)["complete"]
+            treeview.forget()
+            with open("Other_title_categories.json", "r") as other_fo:
+                other_fo_data = json.load(other_fo)["complete"]
+            try:
+                complete_tereeview = ttk.Treeview(mainWindow)
 
-            print(other_fo_data)
+                complete_tereeview.config(columns=('sn', 'ep'))
+                complete_tereeview.column('#0', width=150, anchor=CENTER)
+                complete_tereeview.column('sn', width=60, anchor=CENTER)
+                complete_tereeview.column('ep', width=60, anchor=CENTER)
 
-        try:
+                complete_tereeview.heading('#0', text='Name')
+                complete_tereeview.heading('sn', text='Season')
+                complete_tereeview.heading('ep', text='Episode')
 
+                for k, v in sorted(other_fo_data.items()):
+                    complete_tereeview.insert('', END, '#{}'.format(k), text=k)
+                    complete_tereeview.set('#{}'.format(k), 'sn', v[0])
+                    complete_tereeview.set('#{}'.format(k), 'ep', v[1])
 
-            treeview2 = ttk.Treeview(mainWindow)
+                complete_tereeview.pack(side=RIGHT, fill=Y)
 
-            treeview2.config(columns=('sn', 'ep'))
-            treeview2.column('#0', width=150, anchor=CENTER)
-            treeview2.column('sn', width=60, anchor=CENTER)
-            treeview2.column('ep', width=60, anchor=CENTER)
+                if operating_system == 'win32' or 'linux' or 'cygwin':
+                    complete_tereeview.bind('<Button-3>', complete_selectitem_options)
+                elif operating_system == 'darwin':
+                    complete_tereeview.bind('<Button-2>', complete_selectitem_options)
 
-            treeview2.heading('#0', text='Name')
-            treeview2.heading('sn', text='Season')
-            treeview2.heading('ep', text='Episode')
+            except Exception as e2:
+                print(e2)
 
-            for k, v in sorted(other_fo_data.items()):
-                treeview2.insert('', END, '#{}'.format(k), text=k)
-                treeview2.set('#{}'.format(k), 'sn', v[0])
-                treeview2.set('#{}'.format(k), 'ep', v[1])
+            # prevent re-packing
+            view_compl_var.set(True)
+            view_curren_var.set(False)
 
-            treeview2.pack(side=RIGHT, fill=Y)
+        elif (what == "current") and (view_curren_var.get() == False):
+            print("view current list")
 
-        except Exception as e2:
-            print(e2)
+            # the function
+            try:
+                complete_tereeview.forget()
+                treeview.pack(side=RIGHT, fill=Y)
+            except Exception as e3:
+                print(e3)
 
-    def view_movies():
+            # prevent re-packing
+            view_compl_var.set(False)
+            view_curren_var.set(True)
 
-        try:
-            treeview2.forget()
+        elif what == "wishlist":
+            print("view my wish list")
 
-            treeview.pack(side=RIGHT, fill=Y)
-        except Exception as e3:
+            # code
+            wishlist_toplevel = Toplevel(mainWindow)
 
-            print(e3)
+            global wishlist_treeview
+
+            with open("Other_title_categories.json", "r") as other_fo:
+                other_fo_data = json.load(other_fo)["wish_list"]
+            try:
+                wishlist_treeview = ttk.Treeview(wishlist_toplevel)
+
+                wishlist_treeview.config(columns=('sn', 'ep'))
+                wishlist_treeview.column('#0', width=200, anchor=CENTER)
+                wishlist_treeview.column('sn', width=50, anchor=CENTER)
+                wishlist_treeview.column('ep', width=150, anchor=CENTER)
+
+                wishlist_treeview.heading('#0', text='Name')
+                wishlist_treeview.heading('sn', text='Season')
+                wishlist_treeview.heading('ep', text='Date added')
+
+                for k, v in sorted(other_fo_data.items()):
+                    wishlist_treeview.insert('', END, '#{}'.format(k), text=k)
+                    wishlist_treeview.set('#{}'.format(k), 'sn', v[0])
+                    wishlist_treeview.set('#{}'.format(k), 'ep', v[3])
+                wishlist_treeview.pack(fill=Y, padx=2, pady=5)
+
+            except Exception as e2:
+                print(e2)
+
+            if operating_system == 'win32' or 'linux' or 'cygwin':
+                wishlist_treeview.bind('<Button-3>', wishlist_selectitem_options)
+            elif operating_system == 'darwin':
+                wishlist_treeview.bind('<Button-2>', wishlist_selectitem_options)
+
+            wishlist_toplevel.geometry("400x600")
+            wishlist_toplevel.resizable(0, 0)
+            wishlist_toplevel.title("Wish list")
+
+            view_compl_var.set(False)
+            view_curren_var.set(False)
+
+        elif what == "onbreak":
+            print("view shows on break")
+
+            onbreak_topview = Toplevel(mainWindow)
+
+            global onbreak_treeview
+
+            with open("Other_title_categories.json", "r") as other_fo:
+                other_fo_data = json.load(other_fo)["on_break"]
+            try:
+                onbreak_treeview = ttk.Treeview(onbreak_topview)
+
+                onbreak_treeview.config(columns=('sn', 'ep'))
+                onbreak_treeview.column('#0', width=200, anchor=CENTER)
+                onbreak_treeview.column('sn', width=50, anchor=CENTER)
+                onbreak_treeview.column('ep', width=150, anchor=CENTER)
+
+                onbreak_treeview.heading('#0', text='Name')
+                onbreak_treeview.heading('sn', text='Season')
+                onbreak_treeview.heading('ep', text='Date added')
+
+                for k, v in sorted(other_fo_data.items()):
+                    onbreak_treeview.insert('', END, '#{}'.format(k), text=k)
+                    onbreak_treeview.set('#{}'.format(k), 'sn', v[0])
+                    onbreak_treeview.set('#{}'.format(k), 'ep', v[3])
+                onbreak_treeview.pack(fill=Y, padx=2, pady=5)
+
+            except Exception as e2:
+                print(e2)
+
+            if operating_system == 'win32' or 'linux' or 'cygwin':
+                onbreak_treeview.bind('<Button-3>', onbreak_selectitem_options)
+            elif operating_system == 'darwin':
+                onbreak_treeview.bind('<Button-2>', onbreak_selectitem_options)
+
+            onbreak_topview.geometry("400x600")
+            onbreak_topview.resizable(0, 0)
+            onbreak_topview.title("Shows on break")
+
+            view_compl_var.set(False)
+            view_curren_var.set(False)
+
+    def add_to_wish_list():
+        with open('Other_title_categories.json') as f:
+            other_data = json.load(f)
+
+        wishlist_data = other_data["wish_list"]
+
+        print(wishlist_data)
+
+        def add_wish():
+
+            title = movie_titleent.get()
+
+            if title != "":
+                print(title)
+                wishlist_data[title.title()] = [0, 0, "NO Preview", "{}".format(datetime.datetime.now().date())]
+                # write change to json file
+                with open("Other_title_categories.json", "w") as othfo:
+                    json.dump(other_data, othfo, indent=2)
+            else:
+                print("nothing")
+
+            add_wishlist_window.destroy()
+
+        add_wishlist_window = Toplevel(mainWindow)  # change to top view
+
+        add_title = Label(add_wishlist_window, text=' Add a new Movie to your wish-list'.upper(), bg='white', anchor=CENTER)
+        add_title.pack(side=TOP)
+
+        movie_titlelb = Label(add_wishlist_window, text='Movie Title : '.upper(), bg='white', anchor=CENTER)
+        movie_titlelb.pack(side=LEFT)
+
+        movie_titleent = Entry(add_wishlist_window, bg='white', width=35, fg="black")
+        movie_titleent.pack(side=LEFT, after=movie_titlelb)
+
+        addbut = Button(add_wishlist_window, bg='white', text='add'.upper(), command=add_wish)
+        addbut.pack(side=LEFT, anchor=CENTER, padx=5)
+
+        add_wishlist_window.geometry('400x100+500+300')
+        add_wishlist_window.config(bg='white')
+        add_wishlist_window.resizable(width=False, height=False)
+        add_wishlist_window.title('ADD MOVIES TO WISH LIST')
+
+    def watch_tutorials():
+
+        pass
+
+    # menu bar
 
     watchsite_menu = Menu(tearoff=0)
-    watchsite_menu.add_radiobutton(label="  Fmovies  ", background="white", foreground="black", command=lambda: set_watch_site("Fmovies"))
-    watchsite_menu.add_radiobutton(label="  IO-Movies  ", background="white", foreground="black", command=lambda: set_watch_site("IO-Movies"))
-    watchsite_menu.add_radiobutton(label="  Putlocker  ", background="white", foreground="black", command=lambda: set_watch_site("Putlocker"))
+    watchsite_menu.add_radiobutton(label="  Fmovies  ", background="white", foreground="black",
+                                   command=lambda: set_watch_site("Fmovies"))
+    watchsite_menu.add_radiobutton(label="  IO-Movies  ", background="white", foreground="black",
+                                   command=lambda: set_watch_site("IO-Movies"))
+    watchsite_menu.add_radiobutton(label="  Putlocker  ", background="white", foreground="black",
+                                   command=lambda: set_watch_site("Putlocker"))
 
     doenloadsite_menu = Menu(tearoff=0)
-    doenloadsite_menu.add_radiobutton(label="  EZTV  ", background="white", foreground="black", command=lambda: set_download_site("EZTV"))
-    doenloadsite_menu.add_radiobutton(label=" Torrentcouch", background="white", foreground="black", command=lambda: set_download_site("Torrentcouch"))
+    doenloadsite_menu.add_radiobutton(label="  EZTV  ", background="white", foreground="black",
+                                      command=lambda: set_download_site("EZTV"))
+    doenloadsite_menu.add_radiobutton(label=" Torrentcouch", background="white", foreground="black",
+                                      command=lambda: set_download_site("Torrentcouch"))
 
     filemenu = Menu(tearoff=0)
-    filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
     filemenu.add_command(label='Push My Data', command=lambda: gitup.push_up())
     filemenu.add_command(label='Pull My Data', command=lambda: gitup.pull_down())
     filemenu.add_separator()
     filemenu.add_cascade(label="Watching Sites", menu=watchsite_menu)
     filemenu.add_cascade(label="Download Sites", menu=doenloadsite_menu)
+    filemenu.add_separator()
+    filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
 
     options_menu = Menu(tearoff=0)
-    options_menu.add_command(label='update list', command=refresh)
-    options_menu.add_checkbutton(label='Online thumbs', variable=jep, command=lambda: print(jep.get()))
+    options_menu.add_command(label='Update list', command=refresh)
     options_menu.add_command(label="Account Login", command=LogIn.login_UI)
-    options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var, command=lambda: print(auto_refresh_var.get()))
+    options_menu.add_separator()
+    options_menu.add_command(label="Add to wish list", command=add_to_wish_list)
+    options_menu.add_checkbutton(label='Online thumbs', variable=jep, command=lambda: print(jep.get()))
+    # options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var,
+    #                              command=lambda: print(auto_refresh_var.get()))
 
+    view_compl_var = BooleanVar()
+    view_curren_var = BooleanVar()
+    view_option_menu = Menu(tearoff=0)
+    view_option_menu.add_radiobutton(label="  Complete Tv-Shows  ", command=lambda: change_view("complete"))
+    view_option_menu.add_radiobutton(label="  Currently watching list", command=lambda: change_view("current"))
+    view_option_menu.add_radiobutton(label="  My Wish List ", command=lambda: change_view("wishlist"))
+    view_option_menu.add_radiobutton(label="  Shows On Break", command=lambda: change_view("onbreak"))
     view_menu = Menu(tearoff=0)
-    view_menu.add_command(label="view completed movies", command=view_complete)
-    view_menu.add_command(label="view current movies", command=view_movies)
+    view_menu.add_cascade(label="  view..  ", menu=view_option_menu)
+
+    helpmenu = Menu(tearoff=0)
+    helpmenu.add_command(label=" Video Tutorials", command=watch_tutorials)
 
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
     menubar.add_cascade(label="View", menu=view_menu)
+    menubar.add_cascade(label="Help", menu=helpmenu)
 
     # Widgets
 
@@ -490,20 +758,22 @@ def main():
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies(series_dict)
+    # main tree view right click binging
     treeview.bind('<Double-Button-1>', selectitem)
     if operating_system == 'win32' or 'linux' or 'cygwin':
-        treeview.bind('<Button-3>', selectitem_options)
+        treeview.bind('<Button-3>', selectitem_options_main)
     elif operating_system == 'darwin':
-        treeview.bind('<Button-2>', selectitem_options)
+        treeview.bind('<Button-2>', selectitem_options_main)
 
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11', bg="white", fg="black")
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
                        bd=3, state='disabled', bg="white", fg="black")
 
     searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11', bg="white", fg="black")
-    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white", fg="black")
+    searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white", fg="black", command=search)
 
-    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white", fg="black")
+    addbut = Button(mainWindow, text=' ADD NEW ENTRY ', font='System 12 bold', command=add_movie.add_ui, bg="white",
+                    fg="black")
 
     # Packing Widgets
 
@@ -528,13 +798,9 @@ def main():
 
 
 if __name__ == '__main__':
-    
     def refresh():
         mainWindow.destroy()
         main()
 
+
     main()
-
-
-
-
