@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 import json
 import sys
 import webbrowser
@@ -48,6 +49,59 @@ def main():
         searchent.delete(0, END)
 
         print("This feature is not available yet")
+
+    def clear_data():
+
+        query = messagebox.askyesnocancel(" Delete all user data", "Are you sure you\nwant to delete all the user data from \nlocal disk?")
+
+        if query == 1:
+            # default data
+            other_data = {
+                "complete": {},
+                "wish_list": {},
+                "movies": {},
+                "on_break": {}
+            }
+            series_dict_data = {}
+            details_data = {
+                "use": "",
+                "pas": [],
+                "state": "False"
+            }
+
+            print("clearing other categories file...")
+            with open("Other_title_categories.json", "w") as oth_fo:
+                json.dump(other_data, oth_fo, indent=2)
+            print("clearing the series file...")
+            with open("series_table.json", "w") as ser_fo:
+                json.dump(series_dict_data, ser_fo, indent=2)
+            print("clearing the details file..")
+            with open("details.json", "w") as det_fo:
+                json.dump(details_data, det_fo, indent=2)
+            print("clearing thumbnails...")
+            files = os.listdir("thumbnails")
+            for file in files:
+                if (file == "exclamation.jpg") or (file == "search_ico.png") or (file == "Shadow-Guy-Shrugging.jpg"):
+                    print("not deleting {}".format(file))
+                else:
+                    prev_path = os.getcwd()
+                    os.chdir("thumbnails")
+                    print("deleting file {} ".format(file))
+                    os.remove(file)
+                    os.chdir(prev_path)
+
+            print("Reseting user login info...")
+            gitup.signin("none", "none")
+
+            print("Done with all operations.\n")
+
+        elif query == 0:
+
+            print("cancel deletion of data")
+
+        elif query == "cancel":
+
+            print("cancel deletion of data")
 
     def list_movies(lis):
 
@@ -300,6 +354,8 @@ def main():
                 webbrowser.open_new_tab("http://fmovies.pm/search-movies/{}.html".format(curItem))
             elif prefered_site == "IO-Movies":
                 webbrowser.open_new_tab("https://www.iomovies.to/search?q={}".format(curItem))
+            elif prefered_site == "Fmovies2":
+                webbrowser.open_new_tab("https://www5.fmovies.to/search?keyword={}".format(curItem))
             elif prefered_site == "Putlocker":
                 webbrowser.open_new_tab("http://putlockers.am/search-movies/{}.html".format(curItem))
             else:
@@ -315,6 +371,11 @@ def main():
                 webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
             elif prefered_site == "Torrentcouch":
                 webbrowser.open_new_tab("https://torrentcouch.net/?s={}".format(curItem))
+            elif prefered_site == "PiratesBay":
+                webbrowser.open_new_tab("https://thepiratebay.org/search/{}/0/99/0".format(curItem))
+            else:
+                # default
+                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
 
         def view_thumbnail():
             curItem = treeview.focus().strip('#')
@@ -423,28 +484,8 @@ def main():
             pass
 
         def complete():
-            curitem = onbreak_treeview.focus().strip("#")
-            select_values = series_dict[curitem]
 
-            # with open("Other_title_categories.json", "r") as other_categories_fo:
-            #     other_file_data = json.load(other_categories_fo)
-            #     complete_data = other_file_data["complete"]
-            #     complete_data[curitem] = select_values  # add the selected title to "complete"
-            # with open("Other_title_categories.json", "w") as other_categories_fo2:
-            #     json.dump(other_file_data, other_categories_fo2, indent=2)  # write the edited complete to the file
-            #
-            # print("done writing change to other json file")
-            #
-            # onbreak_treeview.delete("#{}".format(curitem))
-            #
-            # with open("series_table.json", "r") as series_fo:
-            #     series_fo_data = json.load(series_fo)
-            #     del series_fo_data[curitem]
-            #
-            # with open("series_table.json", "w") as series_fo2:
-            #     json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
-            #
-            # print("done writing change to series json file\n")
+            pass
 
         def delete():
 
@@ -609,9 +650,6 @@ def main():
             wishlist_toplevel.resizable(0, 0)
             wishlist_toplevel.title("Wish list")
 
-            view_compl_var.set(False)
-            view_curren_var.set(False)
-
         elif what == "onbreak":
             print("view shows on break")
 
@@ -650,9 +688,6 @@ def main():
             onbreak_topview.geometry("400x600")
             onbreak_topview.resizable(0, 0)
             onbreak_topview.title("Shows on break")
-
-            view_compl_var.set(False)
-            view_curren_var.set(False)
 
     def add_to_wish_list():
         with open('Other_title_categories.json') as f:
@@ -698,13 +733,17 @@ def main():
 
     def watch_tutorials():
 
-        pass
+        print("watch tutorials")
+
+        webbrowser.open_new_tab("https://www.youtube.com/watch?v=2lI5CvZjBPI&list=PLYBkj59Lkv1rtz6lrjRHIizK3kTTH41vB")
 
     # menu bar
 
     watchsite_menu = Menu(tearoff=0)
     watchsite_menu.add_radiobutton(label="  Fmovies  ", background="white", foreground="black",
                                    command=lambda: set_watch_site("Fmovies"))
+    watchsite_menu.add_radiobutton(label="  Fmovies2  ", background="white", foreground="black",
+                                   command=lambda: set_watch_site("Fmovies2"))
     watchsite_menu.add_radiobutton(label="  IO-Movies  ", background="white", foreground="black",
                                    command=lambda: set_watch_site("IO-Movies"))
     watchsite_menu.add_radiobutton(label="  Putlocker  ", background="white", foreground="black",
@@ -715,6 +754,8 @@ def main():
                                       command=lambda: set_download_site("EZTV"))
     doenloadsite_menu.add_radiobutton(label=" Torrentcouch", background="white", foreground="black",
                                       command=lambda: set_download_site("Torrentcouch"))
+    doenloadsite_menu.add_radiobutton(label=" Pirates Bay", background="white", foreground="black",
+                                      command=lambda: set_download_site("PiratesBay"))
 
     filemenu = Menu(tearoff=0)
     filemenu.add_command(label='Push My Data', command=lambda: gitup.push_up())
@@ -731,8 +772,7 @@ def main():
     options_menu.add_separator()
     options_menu.add_command(label="Add to wish list", command=add_to_wish_list)
     options_menu.add_checkbutton(label='Online thumbs', variable=jep, command=lambda: print(jep.get()))
-    # options_menu.add_checkbutton(label="Auto-refresh", variable=auto_refresh_var,
-    #                              command=lambda: print(auto_refresh_var.get()))
+    options_menu.add_command(label="Clear All Data", command=clear_data)
 
     view_compl_var = BooleanVar()
     view_curren_var = BooleanVar()

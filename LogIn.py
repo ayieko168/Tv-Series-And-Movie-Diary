@@ -31,11 +31,12 @@ def login_UI():
             """try to downlaod "series_table" json files from tv series data"""
             user = g.get_user().login
             repo = g.get_repo("{}/Tv-series-data".format(user))
-            tv_series_contents = repo.get_file_contents("series_table.json")
-            tv_series_contents_url = tv_series_contents.download_url
+            tv_series_contents_url = repo.get_file_contents("series_table.json").download_url
+            other_cat_content_url = repo.get_file_contents("Other_title_categories.json").download_url
 
             print("downloading files")
             urllib.request.urlretrieve(tv_series_contents_url, filename="series_table.json")
+            urllib.request.urlretrieve(other_cat_content_url, filename="Other_title_categories.json")
 
             print("done downloading")
         except Exception as e:

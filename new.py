@@ -47,12 +47,12 @@
 #
 # with open("images_url_dict.json", "w") as f:
 #     json.dump(details_dict, f, indent=2)
-
-
+#
+#
 # from github import Github
 #
 # g = Github("ayieko168", "joshuambago1230Q#")
-#
+
 # for repo in g.get_user().get_repos():
 #     print(repo)
 #
@@ -60,6 +60,19 @@
 #
 # print(get_credentials())
 #
-{"complete": {}, "wish_list": {}, "movies": {}, "on_break": {}}
-
+# {"complete": {}, "wish_list": {}, "movies": {}, "on_break": {}}
+#
+# import os
+#
+# files = os.listdir("thumbnails")
+#
+# for file in files:
+#     if (file == "exclamation.jpg") or (file == "search_ico.png") or (file == "Shadow-Guy-Shrugging.jpg"):
+#         print("not deleting {}".format(file))
+#     else:
+#         prev_path = os.getcwd()
+#         os.chdir("thumbnails")
+#         print("deleting file {} ".format(file))
+#         os.remove(file)
+#         os.chdir(prev_path)
 
