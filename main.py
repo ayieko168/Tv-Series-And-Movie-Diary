@@ -829,24 +829,25 @@ def main():
             onbreak_topview.resizable(0, 0)
             onbreak_topview.title("Shows on break")
 
-    def add_to_wish_list():
+    def add_to_wish_list(event):
         with open('Other_title_categories.json') as f:
             other_data = json.load(f)
 
         wishlist_data = other_data["wish_list"]
 
-        print(wishlist_data)
+        print(wishlist_data.keys())
 
-        def add_wish():
+        def add_wish(event):
 
             title = movie_titleent.get()
 
             if title != "":
-                print(title)
+                print(title, " is being added to the wish list")
                 wishlist_data[title.title()] = [0, 0, "NO Preview", "{}".format(datetime.datetime.now().date())]
                 # write change to json file
                 with open("Other_title_categories.json", "w") as othfo:
                     json.dump(other_data, othfo, indent=2)
+                print("successful...")
             else:
                 print("nothing")
 
@@ -862,9 +863,16 @@ def main():
 
         movie_titleent = Entry(add_wishlist_window, bg='white', width=35, fg="black")
         movie_titleent.pack(side=LEFT, after=movie_titlelb)
+        movie_titleent.focus_set()
+        
 
         addbut = Button(add_wishlist_window, bg='white', text='add'.upper(), command=add_wish)
         addbut.pack(side=LEFT, anchor=CENTER, padx=5)
+
+        if operating_system == 'win32' or 'linux' or 'cygwin':
+            add_wishlist_window.bind('<Return>', add_wish)
+        elif operating_system == 'darwin':
+            add_wishlist_window.bind('<Return>', add_wish)
 
         add_wishlist_window.geometry('400x100+500+300')
         add_wishlist_window.config(bg='white')
@@ -995,6 +1003,11 @@ def main():
 
     # canv = Canvas(mainWindow, bg="red")
     # canv.pack(side=TOP, fill=X)
+
+    if operating_system == 'win32' or 'linux' or 'cygwin':
+        mainWindow.bind('<F5> ', add_to_wish_list)
+    elif operating_system == 'darwin':
+        mainWindow.bind('<F5', add_to_wish_list)
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")
