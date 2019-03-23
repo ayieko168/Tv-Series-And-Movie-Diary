@@ -52,7 +52,7 @@ def main():
 
     def clear_data():
 
-        query = messagebox.askyesnocancel(" Delete all user data", "Are you sure you\nwant to delete all the user data from \nlocal disk?")
+        query = messagebox.askyesnocancel(" Delete all user data", "Are you sure you\nwant to delete all the user data from \nlocal disk?\n\nNOTE: It wont affect your cloud data")
 
         if query == 1:
             # default data
@@ -76,8 +76,8 @@ def main():
             with open("series_table.json", "w") as ser_fo:
                 json.dump(series_dict_data, ser_fo, indent=2)
             print("clearing the details file..")
-            with open("details.json", "w") as det_fo:
-                json.dump(details_data, det_fo, indent=2)
+            # with open("details.json", "w") as det_fo:
+            #     json.dump(details_data, det_fo, indent=2)
             print("clearing thumbnails...")
             files = os.listdir("thumbnails")
             for file in files:
@@ -91,7 +91,7 @@ def main():
                     os.chdir(prev_path)
 
             print("Reseting user login info...")
-            gitup.signin("none", "none")
+            #gitup.signin("none", "none")
 
             print("Done with all operations.\n")
 
@@ -125,7 +125,7 @@ def main():
         treeview.heading('sn', text='Season')
         treeview.heading('ep', text='Episode')
 
-    def selectitem(a):
+    def selectitem_double_click(a):
         """callback function for the treeview double click event"""
         try:
             curItem = treeview.focus().strip('#')
@@ -320,12 +320,14 @@ def main():
         def onbreak():
 
             curitem = treeview.focus().strip("#")
+            se, ep, img, dte = series_dict[curitem]
 
             # add selected item to others onbreak json file
+            print("adding selection to on-break file...")
             with open("Other_title_categories.json", "r") as other_categories_fo:
                 other_file_data = json.load(other_categories_fo)
                 onbraek_data = other_file_data["on_break"]
-                onbraek_data[curitem] = [0, 0, "NO Preview", "{}".format(datetime.datetime.now().date())]  # add the selected title to "complete"
+                onbraek_data[curitem] = [se, ep, "NO Preview", "{}".format(datetime.datetime.now().date())]  # add the selected title to "complete"
             with open("Other_title_categories.json", "w") as other_categories_fo2:
                 json.dump(other_file_data, other_categories_fo2, indent=2)  # write the edited complete to the file
 
@@ -334,7 +336,8 @@ def main():
             # remove selected item from main treeview
             treeview.delete("#{}".format(curitem))
 
-            # remove selected item from series dict
+            # remove selected item from series dic
+            print("writing new data to series table...")
             with open("series_table.json", "r") as series_fo:
                 series_fo_data = json.load(series_fo)
                 del series_fo_data[curitem]
@@ -342,7 +345,8 @@ def main():
             with open("series_table.json", "w") as series_fo2:
                 json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
 
-            print("done writing change to series json file\n")
+            print("done writing change to series json file")
+            print("done all operations\n")
 
         def watch_online():
             curItem = treeview.focus().strip('#')
@@ -358,6 +362,8 @@ def main():
                 webbrowser.open_new_tab("https://www5.fmovies.to/search?keyword={}".format(curItem))
             elif prefered_site == "Putlocker":
                 webbrowser.open_new_tab("http://putlockers.am/search-movies/{}.html".format(curItem))
+            elif prefered_site == "9-Anime":
+                webbrowser.open_new_tab("https://www2.9anime.to/search?keyword={}".format(curItem))
             else:
                 webbrowser.open_new_tab("http://fmovies.pm/search-movies/{}.html".format(curItem))
 
@@ -383,9 +389,10 @@ def main():
                 imgs_dict = json.load(f)
 
             name = "-".join(curItem.lower().split())
-            img_list = imgs_dict[name]
-            img_url = img_list[0]
             try:
+                """look for entry info from local database"""
+                img_list = imgs_dict[name]
+                img_url = img_list[0]
                 print(img_list)
                 r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                 if r.status_code == 200:
@@ -397,10 +404,14 @@ def main():
                 # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+
             except KeyError:
-                print("key error")
-            # restart_but_img = ImageTk.PhotoImage(Image.open("icons/reload_32px.png"))
-            # webbrowser.open_new_tab('{}'.format(curItem))
+                print("Error :: KeyError")
+                print("try checking and editing the show title spelling.")
+
+            except Exception as local_excep:
+
+                print("ERROR :: "+ str(local_excep))
 
         def download_thumb():
 
@@ -495,7 +506,7 @@ def main():
 
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Restore', command=restore)
-        popup_menu.add_command(label="Complete", commadn=complete)
+        popup_menu.add_command(label="Complete", command=complete)
         popup_menu.add_separator()
         popup_menu.add_command(label='Delete', command=delete)
 
@@ -508,10 +519,137 @@ def main():
 
         curItem = complete_tereeview.focus().strip('#')
 
+        def download_thumb():
+            curItem = treeview.focus().strip('#')
+            print(curItem)
+            with open("images_url_dict.json", "r") as f53:
+                imgs_dict = json.load(f53)
+
+            name = "-".join(curItem.lower().split())
+            img_list = imgs_dict[name]
+            img_url = img_list[0]
+
+            r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+            path = "thumbnails/{}.jpg".format(name)
+            if r.status_code == 200:
+                with open(path, 'wb') as f3:
+                    r.raw.decode_content = True
+                    shutil.copyfileobj(r.raw, f3)
+            print("Done downloading")
+            editent2var.set(path)
+            with open('series_table.json', 'w') as f5:
+                json.dump(series_dict, f5, indent=2)
+
+        def edit():
+            """edit the properties of the selected item"""
+            curitem = complete_tereeview.focus().strip("#")
+            select_values = series_dict[curitem]
+
+            def raging_fire():
+                """call back function for edit button in the edit window"""
+
+                if editspin1.get() != '1':  # season
+                    select_values[0] = int(editspin1.get())
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
+
+                if editspin2.get() != '1':  # episode
+                    select_values[1] = int(editspin2.get())
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
+
+                if editentvar.get() != curitem:  # name
+                    series_dict[editentvar.get().title()] = series_dict.pop(curitem)  # update the modify date
+                    select_values[3] = "{}".format(datetime.datetime.now())
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
+
+                if editent2var.get() != select_values[2].split('/')[1]:  # pic
+                    select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
+                    select_values[2] = editent2var.get()
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
+
+                complete_tereeview.update()
+
+                edittop.destroy()
+
+            if curitem != "":  # test if an item is highlighted first
+                """the actual ecit window widgets"""
+                edittop = Toplevel()
+
+                editlab1 = Label(edittop, text="Current Tv-Series title : ")
+                editlab1.grid(row=1, column=1, sticky=W, pady=4)
+
+                editent = Entry(edittop, textvariable=editentvar, width=30)
+                editentvar.set(curitem)
+                editent.grid(row=1, column=2, sticky=W, pady=4)
+
+                editlab2 = Label(edittop, text="Current Season {}, chance to : ".format(select_values[0]))
+                editlab2.grid(row=2, column=1, sticky=W, pady=4)
+
+                editspin1 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin1.grid(row=2, column=2, sticky=W, pady=4)
+
+                editlab3 = Label(edittop, text="Current Episode {}, change to : ".format(select_values[1]))
+                editlab3.grid(row=3, column=1, sticky=W, pady=4)
+
+                editspin2 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin2.grid(row=3, column=2, sticky=W, pady=4)
+
+                editlab4 = Label(edittop, text="Change image to : ")
+                editlab4.grid(row=4, column=1, sticky=W, pady=4)
+
+                editent2 = Entry(edittop, textvariable=editent2var, width=35)
+                editent2var.set(select_values[2].split('/')[1])
+                editent2.grid(row=4, column=2, sticky=E, pady=4)
+
+                editbut = Button(edittop, text='Edit', command=raging_fire)
+                editbut.grid(row=5, column=1, sticky=W, pady=4, padx=20)
+
+                download_thumbbut = Button(edittop, text="Download The thumbnail", command=download_thumb)
+                download_thumbbut.grid(row=5, column=2, sticky=W, pady=4, padx=20)
+
+                edittop.geometry("400x200+200+300")
+                edittop.title("Edit properties of {} ".format(curitem).upper())
+
+        def view_thumbnail():
+            curItem = complete_tereeview.focus().strip('#')
+            with open("images_url_dict.json", "r") as f:
+                imgs_dict = json.load(f)
+
+            name = "-".join(curItem.lower().split())
+            try:
+                """look for entry info from local database"""
+                img_list = imgs_dict[name]
+                img_url = img_list[0]
+                print(img_list)
+                r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                if r.status_code == 200:
+                    with open("thumbnails/{}.jpg".format(name), 'wb') as thum_fo:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, thum_fo)
+                print("Done downloading")
+                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
+                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                Label.image = image
+                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+
+            except KeyError:
+                print("Error :: KeyError")
+                print("try checking and editing the show title spelling.")
+
+            except Exception as local_excep:
+
+                print("ERROR :: " + str(local_excep))
+
         popup_menu = Menu(tearoff=0)
-        popup_menu.add_command(label='Edit')
-        popup_menu.add_command(label="Complete")
-        popup_menu.add_command(label=" It worked for complete")
+        popup_menu.add_command(label='Edit', command=edit)
+        popup_menu.add_command(label="Continue Watching")
+        popup_menu.add_command(label="View thumbnail", command=view_thumbnail)
+        popup_menu.add_separator()
         popup_menu.add_command(label='Delete')
 
         if curItem == "":
@@ -737,6 +875,29 @@ def main():
 
         webbrowser.open_new_tab("https://www.youtube.com/watch?v=2lI5CvZjBPI&list=PLYBkj59Lkv1rtz6lrjRHIizK3kTTH41vB")
 
+    def about_func():
+
+        def about_right_click(event):
+
+            popup_menu = Menu(tearoff=0)
+            popup_menu.add_command(label='Copy')
+
+            
+            popup_menu.post(event.x_root, event.y_root)
+
+        abt_topLevel = Toplevel(mainWindow)
+
+        abt_string = "Visit The Github repo for more info :\n\n\n\nhttps://github.com/ayieko168/Tv-Series-And-Movie-Diary.git"
+
+        abt_text = Text(abt_topLevel, bg="black", fg="white", width=60, height=10)
+        abt_text.insert(INSERT, abt_string)
+        abt_text.pack()
+
+        if operating_system == 'win32' or 'linux' or 'cygwin':
+            abt_text.bind('<Button-3>', about_right_click)
+        elif operating_system == 'darwin':
+            abt_text.bind('<Button-2>', about_right_click)
+    
     # menu bar
 
     watchsite_menu = Menu(tearoff=0)
@@ -748,6 +909,8 @@ def main():
                                    command=lambda: set_watch_site("IO-Movies"))
     watchsite_menu.add_radiobutton(label="  Putlocker  ", background="white", foreground="black",
                                    command=lambda: set_watch_site("Putlocker"))
+    watchsite_menu.add_radiobutton(label="  9-Anime  ", background="white", foreground="black",
+                                   command=lambda: set_watch_site("9-Anime"))
 
     doenloadsite_menu = Menu(tearoff=0)
     doenloadsite_menu.add_radiobutton(label="  EZTV  ", background="white", foreground="black",
@@ -786,6 +949,7 @@ def main():
 
     helpmenu = Menu(tearoff=0)
     helpmenu.add_command(label=" Video Tutorials", command=watch_tutorials)
+    helpmenu.add_command(label=" About", command=about_func)
 
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
@@ -799,7 +963,7 @@ def main():
     tree_configure()
     list_movies(series_dict)
     # main tree view right click binging
-    treeview.bind('<Double-Button-1>', selectitem)
+    treeview.bind('<Double-Button-1>', selectitem_double_click)
     if operating_system == 'win32' or 'linux' or 'cygwin':
         treeview.bind('<Button-3>', selectitem_options_main)
     elif operating_system == 'darwin':
