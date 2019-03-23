@@ -866,7 +866,8 @@ def main():
         movie_titleent.focus_set()
         
 
-        addbut = Button(add_wishlist_window, bg='white', text='add'.upper(), command=add_wish)
+        addbut = Button(add_wishlist_window, bg='white', text='add'.upper())
+        addbut.bind('<Button-1>', add_wish)
         addbut.pack(side=LEFT, anchor=CENTER, padx=5)
 
         if operating_system == 'win32' or 'linux' or 'cygwin':
