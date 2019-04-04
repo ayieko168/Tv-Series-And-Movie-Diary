@@ -328,3 +328,8 @@ def view_details():
     url, title, ID = imgs_dict[name]
 
     webbrowser.open_new_tab("https://eztv.io/shows/{}/{}/".format(ID, title))
+
+
+l = "https://www.dosgames.com/game/duke-nukem-3d/"
+
+print("{}.{}".format(l.split("/")[-2].replace("-", "_").upper(), "zip"))
