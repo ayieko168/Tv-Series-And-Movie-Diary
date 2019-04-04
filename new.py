@@ -252,6 +252,8 @@ def download_it():
         webbrowser.open_new_tab("https://torrentcouch.net/?s={}".format(curItem))
     elif prefered_site == "PiratesBay":
         webbrowser.open_new_tab("https://thepiratebay.org/search/{}/0/99/0".format(curItem))
+    elif prefered_site == "yifi":
+        webbrowser.open_new_tab("https://yts.am/browse-movies/{}/all/all/0/latest".format(curItem))
     else:
         # default
         webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))

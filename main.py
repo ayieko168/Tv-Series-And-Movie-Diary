@@ -381,6 +381,8 @@ def main():
                 webbrowser.open_new_tab("https://torrentcouch.net/?s={}".format(curItem))
             elif prefered_site == "PiratesBay":
                 webbrowser.open_new_tab("https://thepiratebay.org/search/{}/0/99/0".format(curItem))
+            elif prefered_site == "yifi":
+                webbrowser.open_new_tab("https://yts.am/browse-movies/{}/all/all/0/latest".format(curItem))
             else:
                 # default
                 webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
@@ -478,10 +480,28 @@ def main():
 
         curItem = wishlist_treeview.focus().strip('#')
 
+        def download_it():
+            prefered_site = donwload_site_var.get()
+
+            print('download {} from the site {}'.format(curItem, prefered_site))
+
+            if prefered_site == "EZTV":
+                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
+            elif prefered_site == "Torrentcouch":
+                webbrowser.open_new_tab("https://torrentcouch.net/?s={}".format(curItem))
+            elif prefered_site == "PiratesBay":
+                webbrowser.open_new_tab("https://thepiratebay.org/search/{}/0/99/0".format(curItem))
+            elif prefered_site == "yifi":
+                webbrowser.open_new_tab("https://yts.am/browse-movies/{}/all/all/0/latest".format(curItem))
+            else:
+                # default
+                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
+
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Edit')
         popup_menu.add_command(label="Complete")
         popup_menu.add_command(label="On Break")
+        popup_menu.add_command(label="Download It...", command=download_it)
         popup_menu.add_command(label="View Thumbnail")
         popup_menu.add_command(label='Delete')
 
@@ -930,6 +950,8 @@ def main():
                                       command=lambda: set_download_site("Torrentcouch"))
     doenloadsite_menu.add_radiobutton(label=" Pirates Bay", background="white", foreground="black",
                                       command=lambda: set_download_site("PiratesBay"))
+    doenloadsite_menu.add_radiobutton(label=" YiFi Movies ", background="white", foreground="black",
+                                      command=lambda: set_download_site("yifi"))
 
     filemenu = Menu(tearoff=0)
     filemenu.add_command(label='Push My Data', command=lambda: gitup.push_up())
