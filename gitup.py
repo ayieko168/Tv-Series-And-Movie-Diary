@@ -29,7 +29,8 @@ def test_signin():
     global g
 
     for repo in g.get_user().get_repos():
-        print(repo.name)
+        if type(repo.name) == type("d"):
+            print("sign in successfull")
 
 
 def get_user():

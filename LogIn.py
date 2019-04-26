@@ -37,8 +37,7 @@ def login_UI():
             print("downloading files")
             urllib.request.urlretrieve(tv_series_contents_url, filename="series_table.json")
             urllib.request.urlretrieve(other_cat_content_url, filename="Other_title_categories.json")
-
-            print("done downloading")
+            print("done downloading files")
         except Exception as e:
             e = literal_eval(str(e).strip('1234567890').strip())['message']
             print(e)
@@ -82,7 +81,7 @@ def login_UI():
                         json.dump(details_dict, f, indent=2)
 
                 login_window.destroy()
-                print("downloading the series list")
+                print("downloading your files and data...")
                 download_data()
 
             except Exception as e:

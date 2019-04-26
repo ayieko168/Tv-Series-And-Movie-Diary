@@ -1,4 +1,9 @@
 Add on-sotware movie details ie--Current episode, Air, Status
-Fix About copy function
-Fix About Read-only
 Fix "Edit" season and episode spinbox default values
+
+
+
+***********Done**********
+2019-04-26 19:46:31.017460
+Fix About Read-only
+Fix About copy function 

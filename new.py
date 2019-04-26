@@ -76,17 +76,25 @@
 #         os.remove(file)
 #         os.chdir(prev_path)
 
-def delete():
+def delete_item_complete():
     """delete the selected item"""
+    curItem = complete_tereeview.focus().strip('#')
 
-    curitem = treeview.focus().strip().strip('#')
-    print("deleting : ", curitem)
+    with open("Other_title_categories.json", "r") as other_categories_fo:
+        other_categories_foData = json.load(other_categories_fo)
+        completeDict = other_categories_foData["complete"]
+        selectetItemData_complete = completeDict[curItem]
 
-    del series_dict[curitem]
+    print("deleting : ", curItem)
 
-    with open('series_table.json', 'w') as f:
+    del completeDict[curItem]
+    other_categories_foData["complete"] = completeDict
+
+    with open('Other_title_categories.json', 'w') as f:
         json.dump(series_dict, f, indent=2)
+        print("done deleting the title ", curItem)
 
+    complete_tereeview.delete(complete_tereeview.focus())
 
 def edit():
     """edit the properties of the selected item"""
@@ -290,28 +298,28 @@ def view_thumbnail():
         print("ERROR :: " + str(local_excep))
 
 
-def download_thumb():
-    curItem = treeview.focus().strip('#')
-    select_values = series_dict[curItem]
-    print(curItem)
-    with open("images_url_dict.json", "r") as f53:
-        imgs_dict = json.load(f53)
+# def download_thumb():
+#     curItem = treeview.focus().strip('#')
+#     select_values = series_dict[curItem]
+#     print(curItem)
+#     with open("images_url_dict.json", "r") as f53:
+#         imgs_dict = json.load(f53)
 
-    name = "-".join(curItem.lower().split())
-    img_list = imgs_dict[name]
-    img_url = img_list[0]
+#     name = "-".join(curItem.lower().split())
+#     img_list = imgs_dict[name]
+#     img_url = img_list[0]
 
-    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-    path = "thumbnails/{}.jpg".format(name)
-    if r.status_code == 200:
-        with open(path, 'wb') as f3:
-            r.raw.decode_content = True
-            shutil.copyfileobj(r.raw, f3)
-    print("Done downloading")
-    select_values = series_dict[curItem]
-    editent2var.set(path)
-    with open('series_table.json', 'w') as f5:
-        json.dump(series_dict, f5, indent=2)
+#     r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+#     path = "thumbnails/{}.jpg".format(name)
+#     if r.status_code == 200:
+#         with open(path, 'wb') as f3:
+#             r.raw.decode_content = True
+#             shutil.copyfileobj(r.raw, f3)
+#     print("Done downloading")
+#     select_values = series_dict[curItem]
+#     editent2var.set(path)
+#     with open('series_table.json', 'w') as f5:
+#         json.dump(series_dict, f5, indent=2)
 
 
 def watch_trailler():
@@ -320,18 +328,42 @@ def watch_trailler():
     webbrowser.open_new_tab("https://www.youtube.com/results?search_query={}".format(curItem))
 
 
-def view_details():
-    curitem = treeview.focus().strip("#")
+def view_details_complete():
+    """callback for view deteails option in the complete list"""
+    curItem = complete_tereeview.focus().strip('#')
 
-    with open("images_url_dict.json", "r") as f23:
-        imgs_dict = json.load(f23)
-    name = "-".join(curitem.lower().split())
+    with open("images_url_dict.json", "r") as images_dict_fo_complete:
+        imgs_dict = json.load(images_dict_fo_complete)
+    name = "-".join(curItem.lower().split())
 
     url, title, ID = imgs_dict[name]
 
     webbrowser.open_new_tab("https://eztv.io/shows/{}/{}/".format(ID, title))
 
+def continue_watching_comlete():
 
-l = "https://www.dosgames.com/game/duke-nukem-3d/"
+            curItem = complete_tereeview.focus().strip('#')
+            with open("Other_title_categories.json", "r") as other_categories_fo:
+                other_categories_foData = json.load(other_categories_fo)
+                completeDict = other_categories_foData["complete"]
+                selectetItemData_complete = completeDict[curItem]
 
-print("{}.{}".format(l.split("/")[-2].replace("-", "_").upper(), "zip"))
+            with open("series_table.json", "r") as series_fo:
+                series_fo_data = json.load(series_fo)
+                series_fo_data[curItem] = selectetItemData_complete
+
+            with open("series_table.json", "w") as series_fo2:
+                json.dump(series_fo_data, series_fo2, indent=2)  # write the edited complete to the file
+                print(curItem + " succesfully added to the currenty watching tree...")
+
+            with open("Other_title_categories.json", "w") as other_categories_fo2:
+                del completeDict[curItem]
+                other_categories_foData["complete"] = completeDict
+                json.dump(other_categories_foData, other_categories_fo2, indent=2)  # write the edited complete to the file
+                print("done writing relevent changes...")
+            
+            complete_tereeview.delete(complete_tereeview.focus())
+            lis = {curItem : selectetItemData_complete}
+            print(lis)
+            list_movies(lis)
+          
