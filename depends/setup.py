@@ -4,7 +4,7 @@ import os
 import sys
 from time import sleep
 
-os.chdir("/Program Files (x86)/Python37-32/")
+#os.chdir("/Program Files (x86)/Python37-32/")
 
 operating_system = sys.platform
 
