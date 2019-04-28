@@ -80,13 +80,13 @@ def add_ui():
     seasonlb = Label(add_window, text=' Season : '.upper(), bg='white', anchor=CENTER)
     seasonlb.place(x=10, y=60)
 
-    seasoncom = Spinbox(add_window, bg='white', from_=1, to=1000)
+    seasoncom = Spinbox(add_window, bg='white', from_=0, to=1000)
     seasoncom.place(x=100, y=60)
 
     episodelb = Label(add_window, text=' Episode : '.upper(), bg='white', anchor=CENTER)
     episodelb.place(x=10, y=90)
 
-    episodecom = Spinbox(add_window, bg='white', from_=1, to=1000)
+    episodecom = Spinbox(add_window, bg='white', from_=0, to=1000)
     episodecom.place(x=100, y=90)
 
     add_piclb = Label(add_window, text=' Add a preview pic :'.upper(), bg='white', anchor=CENTER)

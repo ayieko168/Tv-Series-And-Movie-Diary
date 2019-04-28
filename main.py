@@ -221,6 +221,9 @@ def main():
 
     def selectitem_options_main(event):
         """call back function when right click on an item on the main tree-view"""
+        with open('series_table.json') as f:  # re-reading data from json for series
+            series_dict = json.load(f)
+
         curItem = treeview.focus().strip('#')
 
         def delete():
@@ -246,13 +249,13 @@ def main():
             def raging_fire():
                 """call back function for edit button in the edit window"""
 
-                if editspin1.get() != '1':  # season
+                if editspin1.get() != '0':  # season
                     select_values[0] = int(editspin1.get())
                     select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
                     with open('series_table.json', 'w') as f:
                         json.dump(series_dict, f, indent=2)
 
-                if editspin2.get() != '1':  # episode
+                if editspin2.get() != '0':  # episode
                     select_values[1] = int(editspin2.get())
                     select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
                     with open('series_table.json', 'w') as f:
@@ -286,13 +289,13 @@ def main():
                 editlab2 = Label(edittop, text="Current Season {}, chance to : ".format(select_values[0]))
                 editlab2.grid(row=2, column=1, sticky=W, pady=4)
 
-                editspin1 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin1 = Spinbox(edittop, from_=0, to=1000, width=5)
                 editspin1.grid(row=2, column=2, sticky=W, pady=4)
 
                 editlab3 = Label(edittop, text="Current Episode {}, change to : ".format(select_values[1]))
                 editlab3.grid(row=3, column=1, sticky=W, pady=4)
 
-                editspin2 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin2 = Spinbox(edittop, from_=0, to=1000, width=5)
                 editspin2.grid(row=3, column=2, sticky=W, pady=4)
 
                 editlab4 = Label(edittop, text="Change image to : ")
@@ -378,7 +381,7 @@ def main():
             elif prefered_site == "Fmovies2":
                 webbrowser.open_new_tab("https://www5.fmovies.to/search?keyword={}".format(curItem))
             elif prefered_site == "Putlocker":
-                webbrowser.open_new_tab("http://putlockers.am/search-movies/{}.html".format(curItem))
+                webbrowser.open_new_tab("https://www.putlockers.me/search/{}/".format(curItem))
             elif prefered_site == "9-Anime":
                 webbrowser.open_new_tab("https://www2.9anime.to/search?keyword={}".format(curItem))
             else:
@@ -403,7 +406,7 @@ def main():
                 webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
 
         def view_thumbnail():
-            curItem = wishlist_treeview.focus().strip('#')
+            curItem = treeview.focus().strip('#')
             with open("images_url_dict.json", "r") as f:
                 imgs_dict = json.load(f)
 
@@ -498,15 +501,18 @@ def main():
 
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Edit', command=edit)
+        popup_menu.add_separator()
         popup_menu.add_command(label="Complete", command=complete)
         popup_menu.add_command(label="On Break", command=onbreak)
-        popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
-        popup_menu.add_command(label='Delete', command=delete)
         popup_menu.add_separator()
+        popup_menu.add_command(label="View Thumbnail", command=view_thumbnail)
+        popup_menu.add_separator()
+        popup_menu.add_command(label='Download', command=download_it)
         popup_menu.add_command(label="Watch Trailer", command=watch_trailler)
         popup_menu.add_command(label="Watch Online", command=watch_online)
-        popup_menu.add_command(label='Download', command=download_it)
         popup_menu.add_command(label="View Details", command=view_details)
+        popup_menu.add_separator()
+        popup_menu.add_command(label='Delete', command=delete)
 
         if curItem == "":
             print("add some items my friend...")
@@ -534,6 +540,33 @@ def main():
             else:
                 webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem)) 
 
+        def start_watching_wishlist():
+
+            curItem = wishlist_treeview.focus().strip('#')
+            with open("Other_title_categories.json", "r") as other_categories_fo:
+                other_categories_foData = json.load(other_categories_fo)
+                wishlistDict = other_categories_foData["wish_list"]
+                selectetItemData_wishlist = wishlistDict[curItem]
+
+            with open("series_table.json", "r") as series_fo:
+                series_fo_data = json.load(series_fo)
+                series_fo_data[curItem] = selectetItemData_wishlist
+
+            with open("series_table.json", "w") as series_fo2:
+                json.dump(series_fo_data, series_fo2, indent=2)  # write the edited wished to the file
+                print(curItem + " succesfully added to the currenty watching tree...")
+
+            with open("Other_title_categories.json", "w") as other_categories_fo2:
+                del wishlistDict[curItem]
+                other_categories_foData["wish_list"] = wishlistDict
+                json.dump(other_categories_foData, other_categories_fo2, indent=2)  # write the edited wished to the file
+                print("done writing relevent changes...")
+            
+            wishlist_treeview.delete(wishlist_treeview.focus())
+            lis = {curItem : selectetItemData_wishlist}
+            print(lis)
+            list_movies(lis)
+
         def edit_the_selected_value_wishlist():
             """edit the properties of the selected item"""
 
@@ -549,7 +582,7 @@ def main():
             def raging_fire():
                 """call back function for edit button in the edit window"""
 
-                if editspin1.get() != '1':  # season
+                if editspin1.get() != '0':  # season
                     select_values[0] = int(editspin1.get()) # modify the change
                     select_values[3] = "{}".format(datetime.datetime.now().date())  # update the modify date
                     with open('Other_title_categories.json', 'w') as f:
@@ -557,7 +590,7 @@ def main():
                         json.dump(other_categories_foData, f, indent=2)
                         print("done writing changes")
                         
-                if editspin2.get() != '1':  # episode
+                if editspin2.get() != '0':  # episode
                     select_values[1] = int(editspin2.get())
                     select_values[3] = "{}".format(datetime.datetime.now().date())  # update the modify date
                     with open('Other_title_categories.json', 'w') as f:
@@ -590,13 +623,13 @@ def main():
                 editlab2 = Label(edittop, text="Current Season {}, chance to : ".format(select_values[0]))
                 editlab2.grid(row=2, column=1, sticky=W, pady=4)
 
-                editspin1 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin1 = Spinbox(edittop, from_=0, to=1000, width=5)
                 editspin1.grid(row=2, column=2, sticky=W, pady=4)
 
                 editlab3 = Label(edittop, text="Current Episode {}, change to : ".format(select_values[1]))
                 editlab3.grid(row=3, column=1, sticky=W, pady=4)
 
-                editspin2 = Spinbox(edittop, from_=1, to=1000, width=5)
+                editspin2 = Spinbox(edittop, from_=0, to=1000, width=5)
                 editspin2.grid(row=3, column=2, sticky=W, pady=4)
 
                 editbut = Button(edittop, text='Edit', command=raging_fire)
@@ -640,7 +673,7 @@ def main():
             elif prefered_site == "Fmovies2":
                 webbrowser.open_new_tab("https://www5.fmovies.to/search?keyword={}".format(curItem))
             elif prefered_site == "Putlocker":
-                webbrowser.open_new_tab("http://putlockers.am/search-movies/{}.html".format(curItem))
+                webbrowser.open_new_tab("https://www.putlockers.me/search/{}/".format(curItem))
             elif prefered_site == "9-Anime":
                 webbrowser.open_new_tab("https://www2.9anime.to/search?keyword={}".format(curItem))
             else:
@@ -758,12 +791,16 @@ def main():
 
         popup_menu = Menu(tearoff=0)
         popup_menu.add_command(label='Edit', command=edit_the_selected_value_wishlist)
+        popup_menu.add_separator()
+        popup_menu.add_command(label="Start watching", command=start_watching_wishlist)
         popup_menu.add_command(label="Complete", command=complete_wishlist)
+        popup_menu.add_separator()
+        popup_menu.add_command(label="View Thumbnail", command=view_thumbnail_wishlist)
+        popup_menu.add_separator()
         popup_menu.add_command(label="Watch online", command=watch_online_wishlist)
         popup_menu.add_command(label="Download It..", command=download_it_wishliat)
-        popup_menu.add_command(label="View Thumbnail", command=view_thumbnail_wishlist)
-        popup_menu.add_command(label="View Details", command=view_details_wishlist)
         popup_menu.add_command(label="On Beak", command=onbreak_wishlist)
+        popup_menu.add_command(label="View Details", command=view_details_wishlist)
         popup_menu.add_separator()
         popup_menu.add_command(label='Delete', command=delete_item_wishlist)
 
@@ -957,7 +994,7 @@ def main():
             
         def view_thumbnail_complete():
             """view the thumbnail of the selected item in the complete list"""
-            curItem = wishlist_treeview.focus().strip('#')
+            curItem = complete_tereeview.focus().strip('#')
             with open("images_url_dict.json", "r") as f:
                 imgs_dict = json.load(f)
 
@@ -1235,7 +1272,7 @@ def main():
 
             if title != "":
                 print(title, " is being added to the wish list")
-                wishlist_data[title.title()] = [0, 0, "NO Preview", "{}".format(datetime.datetime.now().date())]
+                wishlist_data[title.title()] = [0, 0, "thumbnails/", "{}".format(datetime.datetime.now().date())]
                 # write change to json file
                 with open("Other_title_categories.json", "w") as othfo:
                     json.dump(other_data, othfo, indent=2)
