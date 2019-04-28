@@ -58,7 +58,7 @@ def login_UI():
     def signin():
         """call back for sign in button"""
 
-        global signed_inlb_var, user_nameent_var, passwordent_var
+        global user_nameent_var, passwordent_var
 
         with open('series_table.json') as f:  # initial reading of json data for series
             data = json.load(f)

@@ -22,6 +22,17 @@ operating_system = sys.platform
 width = 550
 height = 650
 
+# image paths
+NoImageFilePath = "thumbnails\\No_Image_Available.jpg"
+SearchIconPath = "thumbnails\\search_ico.png"
+ShadowGuyImagePath = "thumbnails\\Shadow-Guy-Shrugging.jpg"
+
+# keyboard keys
+ADD_TO_WISHLIST_KEY = "<F5>"
+REFRESH_PROGARAM_KEY = "<F12>"
+HELP_KEY = "<F1>"
+
+
 print('starting...')
 try:
     with open('series_table.json') as f:  # initial reading of json data for series
@@ -57,8 +68,130 @@ def main():
         search_item = searchent.get()
         searchent.delete(0, END)
 
-        print("This feature is not available yet")
+        print("This feature is not available yet\n")
 
+    def view_thumbnail_main(from_treeview):
+
+        curItem = from_treeview.focus().strip('#')
+
+        with open('series_table.json') as f:  # refresh serises data
+            series_dict = json.load(f)
+            select_values = series_dict[curItem]
+        with open("images_url_dict.json", "r") as f:
+            imgs_dict = json.load(f)
+
+        print("using main viewer")
+        print("online thumbs set to {}".format(online_thumbs.get()))
+        
+        if (online_thumbs.get() == 1):
+            """view the thumbnail of the selected item in the complete list"""
+            # if online thumb is True
+
+            print("view thumbnail from online source")
+
+            name = "-".join(curItem.lower().split())
+            image_name = select_values[2]
+            
+            if (os.path.isfile("thumbnails\\{}.jpg".format(name)) == 0) and (os.path.isfile(image_name) ==0):
+                # check if there is an already downloaded image file
+                try:
+                    """look for entry info from local database"""
+                    img_list = imgs_dict[name]
+                    img_url = img_list[0]
+                    print(img_list)
+                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                    if r.status_code == 200:
+                        with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
+                            r.raw.decode_content = True
+                            shutil.copyfileobj(r.raw, f)
+                    print("Done downloading image")
+                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                    # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                    # edit dtored image data
+                    select_values[2] = "thumbnails\\{}.jpg".format(name)
+                    with open('series_table.json', 'w') as f:
+                        json.dump(series_dict, f, indent=2)
+
+                except KeyError:
+                    print("Failed series image list....")
+                    
+                    name = curItem
+                    try:
+                        img_list = imgs_dict[name]
+                        img_url = img_list[1]
+                        print(img_list)
+                        r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
+                        if r.status_code == 200:
+                            with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
+                                r.raw.decode_content = True
+                                shutil.copyfileobj(r.raw, f)
+                        print("Done downloading file")
+                        image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                        # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                        # edit dtored image data
+                        select_values[2] = "thumbnails\\{}.jpg".format(name)
+                        with open('series_table.json', 'w') as f:
+                            json.dump(series_dict, f, indent=2)
+
+                    except Exception as error_ml:
+                        print("Failed using movie list Error :: \n", error_ml)
+                        
+                        image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(NoImageFilePath)))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                        print("No previwe image availablen\n")
+
+                except Exception as local_excep:
+
+                    print("ERROR :: " + str(local_excep))
+
+            else:
+                print(" Using localy found image file")
+
+                try:
+                    image = ImageTk.PhotoImage(Image.open(image_name))
+                except:
+                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                Label.image = image
+                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+
+        elif online_thumbs.get() == 0:
+            # callback when online thumbnails is False
+
+            print("view thumbnail from local directory...")
+
+            if series_dict[curItem][2].endswith("jpg"):
+                # if the stored filename has the extension jpg set to LIP
+                local_image_path = series_dict[curItem][2]
+
+                try:
+                    image = ImageTk.PhotoImage(Image.open(local_image_path))
+                    Label.image = image
+                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                except FileNotFoundError:
+                    print("No image file found relating to {}".format(curItem))
+                    print("Suggestions:\n[Edit the file properties under >Edit>Change image to: ]\n[and input the name of the image file the press edit]")
+
+            else:
+                # if not try adding the extension manually
+                try:
+                    local_image_path = series_dict[curItem][2] + ".jpg"
+
+                    try:
+                        image = ImageTk.PhotoImage(Image.open(local_image_path))
+                        Label.image = image
+                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+                    except FileNotFoundError:
+                        print("No image file found relating to {}".format(curItem))
+                        print("Suggestions:\n[Edit the file properties under >Edit>Change image to: ]\n[and input the name of the image file the press edit]")
+                except:
+                    # if not display:
+                    print("Error: This is not a jpeg file please use\na jpeg image or download it from >Edit>DownloadImage")
+            
     def clear_data():
 
         query = messagebox.askyesnocancel(" Delete all user data", "Are you sure you\nwant to delete all the user data from \nlocal disk?\n\nNOTE: It wont affect your cloud data")
@@ -99,7 +232,7 @@ def main():
             print("clearing thumbnails...")
             files = os.listdir("thumbnails")
             for file in files:
-                if (file == "exclamation.jpg") or (file == "search_ico.png") or (file == "Shadow-Guy-Shrugging.jpg"):
+                if (file == "No_Image_Available.jpg") or (file == "search_ico.png") or (file == "Shadow-Guy-Shrugging.jpg"):
                     print("not deleting {}".format(file))
                 else:
                     prev_path = os.getcwd()
@@ -141,83 +274,9 @@ def main():
         treeview.heading('ep', text='Episode')
 
     def selectitem_double_click(a):
-        """callback function for the treeview double click event"""
-        try:
-            curItem = treeview.focus().strip('#')
-            name = "-".join(curItem.lower().split())
+        """callback function for the main treeview double click event"""
 
-            local_image_path = series_dict[curItem][2]
-
-            if jep.get() == 0:  # online thumbs is false
-                try:
-                    """ 1st try to load image from local thumbs directory """
-                    # image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image("thumbnails/Shadow-Guy-Shrugging.jpg")))
-                    image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(local_image_path)))
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                except Exception as e1:
-                    print(type(e1), e1)
-                    if str(type(e1)) == "<class 'PermissionError'>":
-                        image = ImageTk.PhotoImage(Image.open("thumbnails/Shadow-Guy-Shrugging.jpg"))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                    elif str(type(e1)) == "<class 'FileNotFoundError'>":
-                        image = ImageTk.PhotoImage(
-                            Image.open(imageProcessor.resize_image("thumbnails/exclamation.jpg")))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-            else:  # if online thumbs is true
-                curItem = treeview.focus().strip('#')
-                with open("images_url_dict.json", "r") as f:
-                    imgs_dict = json.load(f)
-
-                name = "-".join(curItem.lower().split())
-                img_list = imgs_dict[name]
-                img_url = img_list[0]
-                try:
-                    """try to make temp file"""
-                    os.mkdir("/Windows/Temp/tv_series_temp_thumbs")
-                    try:
-                        """try to load image without downloding"""
-                        image = ImageTk.PhotoImage(Image.open(
-                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                    except FileNotFoundError:
-                        r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                        if r.status_code == 200:
-                            with open(imageProcessor.resize_image(imageProcessor.resize_image(
-                                    "/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))), 'wb') as f:
-                                r.raw.decode_content = True
-                                shutil.copyfileobj(r.raw, f)
-                        print("Done downloading")
-
-                        image = ImageTk.PhotoImage(Image.open(
-                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                except FileExistsError:
-                    """if dir already available"""
-                    try:
-                        image = ImageTk.PhotoImage(Image.open(
-                            imageProcessor.resize_image("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name))))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                    except FileNotFoundError:
-                        r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                        if r.status_code == 200:
-                            with open(imageProcessor.resize_image(
-                                    "/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)), 'wb') as f:
-                                r.raw.decode_content = True
-                                shutil.copyfileobj(r.raw, f)
-                        print("Done downloading")
-
-                        image = ImageTk.PhotoImage(
-                            Image.open("/Windows/Temp/tv_series_temp_thumbs/{}.jpg".format(name)))
-                        Label.image = image
-                        preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-        except Exception as e:
-            print("nothing to show...")
+        view_thumbnail_main(treeview)
 
     def selectitem_options_main(event):
         """call back function when right click on an item on the main tree-view"""
@@ -245,6 +304,7 @@ def main():
 
             curitem = treeview.focus().strip("#")
             select_values = series_dict[curitem]
+            editent2var.set("thumbnails\\")
 
             def raging_fire():
                 """call back function for edit button in the edit window"""
@@ -267,9 +327,9 @@ def main():
                     with open('series_table.json', 'w') as f:
                         json.dump(series_dict, f, indent=2)
 
-                if editent2var.get() != select_values[2].split('/')[1]:  # pic
+                if editent2var.get() != select_values[2]:  # pic
                     select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
-                    select_values[2] = editent2var.get()
+                    select_values[2] = editent2var.get() 
                     with open('series_table.json', 'w') as f:
                         json.dump(series_dict, f, indent=2)
 
@@ -302,7 +362,7 @@ def main():
                 editlab4.grid(row=4, column=1, sticky=W, pady=4)
 
                 editent2 = Entry(edittop, textvariable=editent2var, width=35)
-                editent2var.set(select_values[2].split('/')[1])
+                editent2var.set(select_values[2])
                 editent2.grid(row=4, column=2, sticky=E, pady=4)
 
                 editbut = Button(edittop, text='Edit', command=raging_fire)
@@ -406,58 +466,13 @@ def main():
                 webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
 
         def view_thumbnail():
-            curItem = treeview.focus().strip('#')
-            with open("images_url_dict.json", "r") as f:
-                imgs_dict = json.load(f)
 
-            name = "-".join(curItem.lower().split())
-            try:
-                """look for entry info from local database"""
-                img_list = imgs_dict[name]
-                img_url = img_list[0]
-                print(img_list)
-                r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                if r.status_code == 200:
-                    with open("thumbnails/{}.jpg".format(name), 'wb') as f:
-                        r.raw.decode_content = True
-                        shutil.copyfileobj(r.raw, f)
-                print("Done downloading")
-                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
-                Label.image = image
-                preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
+            view_thumbnail_main(treeview)
 
-            except KeyError:
-                print("Failed series image list....")
-                with open("Movies_List.json", "r") as f:
-                    imgs_dict = json.load(f)
-                
-                name = curItem
-                try:
-                    img_list = imgs_dict[name]
-                    img_url = img_list[1]
-                    print(img_list)
-                    r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-                    if r.status_code == 200:
-                        with open("thumbnails/{}.jpg".format(name), 'wb') as f:
-                            r.raw.decode_content = True
-                            shutil.copyfileobj(r.raw, f)
-                    print("Done downloading")
-                    image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                    # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
-                    Label.image = image
-                    preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
-                except Exception as error_ml:
-                    print("Failed using movie list Error :: \n", error_ml)
-
-
-            except Exception as local_excep:
-
-                print("ERROR :: " + str(local_excep))
-
-                print("ERROR :: "+ str(local_excep))
+            print("done\n")
 
         def download_thumb():
+            """callback for Edit>DownloadThumbnailImage for the main treeview"""
 
             curItem = treeview.focus().strip('#')
             select_values = series_dict[curItem]
@@ -470,7 +485,7 @@ def main():
             img_url = img_list[0]
 
             r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
-            path = "thumbnails/{}.jpg".format(name)
+            path = "thumbnails\\{}.jpg".format(name)
             if r.status_code == 200:
                 with open(path, 'wb') as f3:
                     r.raw.decode_content = True
@@ -713,12 +728,12 @@ def main():
                 print(img_list)
                 r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                 if r.status_code == 200:
-                    with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                    with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
                 print("Done downloading")
-                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
 
@@ -734,12 +749,12 @@ def main():
                     print(img_list)
                     r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                     if r.status_code == 200:
-                        with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                        with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
                     print("Done downloading")
-                    image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                    # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                    # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                     Label.image = image
                     preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
                 except Exception as error_ml:
@@ -889,12 +904,12 @@ def main():
                 print(img_list)
                 r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                 if r.status_code == 200:
-                    with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                    with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
                 print("Done downloading")
-                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
 
@@ -910,12 +925,12 @@ def main():
                     print(img_list)
                     r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                     if r.status_code == 200:
-                        with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                        with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
                     print("Done downloading")
-                    image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                    # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                    # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                     Label.image = image
                     preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
                 except Exception as error_ml:
@@ -1006,12 +1021,12 @@ def main():
                 print(img_list)
                 r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                 if r.status_code == 200:
-                    with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                    with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                         r.raw.decode_content = True
                         shutil.copyfileobj(r.raw, f)
                 print("Done downloading")
-                image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
 
@@ -1027,12 +1042,12 @@ def main():
                     print(img_list)
                     r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                     if r.status_code == 200:
-                        with open("thumbnails/{}.jpg".format(name), 'wb') as f:
+                        with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
                     print("Done downloading")
-                    image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
-                    # image = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                    # image = PhotoImage(file='thumbnails\\search_ico.png').subsample(12, 12)
                     Label.image = image
                     preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
                 except Exception as error_ml:
@@ -1093,12 +1108,12 @@ def main():
     # Tkinter Variables
     searchentvar = StringVar()
     searchentvar.set('Search')
-    searchimage = PhotoImage(file='thumbnails/search_ico.png').subsample(12, 12)
+    searchimage = PhotoImage(file=SearchIconPath).subsample(12, 12)
     editentvar = StringVar()
     editent2var = StringVar()
     editent2var.set("image")
     signed_inlb_var = StringVar()
-    jep = BooleanVar()
+    online_thumbs = BooleanVar()
     watch_site_var = StringVar()
     watch_site_var.set("Fmovies")  # set default "watch online " site
     donwload_site_var = StringVar()
@@ -1272,7 +1287,7 @@ def main():
 
             if title != "":
                 print(title, " is being added to the wish list")
-                wishlist_data[title.title()] = [0, 0, "thumbnails/", "{}".format(datetime.datetime.now().date())]
+                wishlist_data[title.title()] = [0, 0, "thumbnails\\", "{}".format(datetime.datetime.now().date())]
                 # write change to json file
                 with open("Other_title_categories.json", "w") as othfo:
                     json.dump(other_data, othfo, indent=2)
@@ -1315,7 +1330,7 @@ def main():
 
         webbrowser.open_new_tab("https://www.youtube.com/watch?v=2lI5CvZjBPI&list=PLYBkj59Lkv1rtz6lrjRHIizK3kTTH41vB")
 
-    def about_func():
+    def about_func(event):
         """About option menu brop down"""
 
         def about_right_click(event):
@@ -1375,11 +1390,11 @@ def main():
     filemenu.add_command(label='Exit', command=lambda: mainWindow.destroy())
 
     options_menu = Menu(tearoff=0)
-    options_menu.add_command(label='Update list', command=refresh)
+    options_menu.add_command(label='Update list', command=lambda: refresh("a"))
     options_menu.add_command(label="Account Login", command=LogIn.login_UI)
     options_menu.add_separator()
     options_menu.add_command(label="Add to wish list", command=lambda: add_to_wish_list("1"))
-    options_menu.add_checkbutton(label='Online thumbs', variable=jep, command=lambda: print(jep.get()))
+    options_menu.add_checkbutton(label='Online thumbs', variable=online_thumbs)
     options_menu.add_command(label="Clear All Data", command=clear_data)
 
     view_compl_var = BooleanVar()
@@ -1394,7 +1409,7 @@ def main():
 
     helpmenu = Menu(tearoff=0)
     helpmenu.add_command(label=" Video Tutorials", command=watch_tutorials)
-    helpmenu.add_command(label=" About", command=about_func)
+    helpmenu.add_command(label=" About", command=lambda: about_func("a"))
 
     menubar.add_cascade(label='File', menu=filemenu)
     menubar.add_cascade(label='Options', menu=options_menu)
@@ -1407,19 +1422,9 @@ def main():
     treeview = ttk.Treeview(mainWindow)
     tree_configure()
     list_movies(series_dict)
-    # main tree view right click binging
-    treeview.bind('<Double-Button-1>', selectitem_double_click)
-    if operating_system == 'win32' or 'linux' or 'cygwin':
-        treeview.bind('<Button-3>', selectitem_options_main)
-    elif operating_system == 'darwin':
-        treeview.bind('<Button-2>', selectitem_options_main)
-
     previewlb = LabelFrame(mainWindow, text=' PREVIEW ', bd=3, font='bold 11', bg="white", fg="black")
     preview_box = Text(previewlb, width=30, height=20, selectbackground='white', relief=SUNKEN,
                        bd=3, state='disabled', bg="white", fg="black")
-    
-    statusbar = Canvas(mainWindow, bg="black")
-
     searchent = Entry(mainWindow, textvariable=searchentvar, width=28, font='italic 11', bg="white", fg="black")
     searchbut = Button(mainWindow, image=searchimage, relief=GROOVE, bd=3, bg="white", fg="black", command=search)
 
@@ -1432,20 +1437,23 @@ def main():
     previewlb.pack(side=LEFT, anchor=S, pady=20, padx=2)
     preview_box.pack(side=LEFT, padx=5, pady=5, anchor=S)
     treeview.pack(side=RIGHT, fill=Y)
-    #statusbar.pack(side=LEFT, padx=2, pady=2, anchor="se", after=preview_box)
-
     searchent.place(x=10, y=60)
     searchbut.place(x=242, y=60)
-
     addbut.place(x=65, y=115)
 
-    # canv = Canvas(mainWindow, bg="red")
-    # canv.pack(side=TOP, fill=X)
+    # key board keys binding
 
+    mainWindow.bind(ADD_TO_WISHLIST_KEY, add_to_wish_list)
+    mainWindow.bind(REFRESH_PROGARAM_KEY, refresh)
+    mainWindow.bind(HELP_KEY, about_func)
+    # main tree view right click binging
+    treeview.bind('<Double-Button-1>', selectitem_double_click)
+    # popup menu binding for the main tree
     if operating_system == 'win32' or 'linux' or 'cygwin':
-        mainWindow.bind('<F5> ', add_to_wish_list)
+        treeview.bind('<Button-3>', selectitem_options_main)
     elif operating_system == 'darwin':
-        mainWindow.bind('<F5', add_to_wish_list)
+        treeview.bind('<Button-2>', selectitem_options_main)
+
 
     mainWindow.geometry("{}x{}+200+100".format(width, height))
     mainWindow.title("  Movie and Series Diary  ")
@@ -1455,7 +1463,8 @@ def main():
 
 
 if __name__ == '__main__':
-    def refresh():
+    def refresh(event):
+        print("Refreshing application...")
         mainWindow.destroy()
         main()
 
