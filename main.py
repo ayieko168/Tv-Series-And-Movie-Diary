@@ -23,9 +23,9 @@ width = 550
 height = 650
 
 # image paths
-NoImageFilePath = "thumbnails\\No_Image_Available.jpg"
-SearchIconPath = "thumbnails\\search_ico.png"
-ShadowGuyImagePath = "thumbnails\\Shadow-Guy-Shrugging.jpg"
+NoImageFilePath = "thumbnails/No_Image_Available.jpg"
+SearchIconPath = "thumbnails/search_ico.png"
+ShadowGuyImagePath = "thumbnails/Shadow-Guy-Shrugging.jpg"
 
 # keyboard keys
 ADD_TO_WISHLIST_KEY = "<F5>"
@@ -92,7 +92,7 @@ def main():
             name = "-".join(curItem.lower().split())
             image_name = select_values[2]
             
-            if (os.path.isfile("thumbnails\\{}.jpg".format(name)) == 0) and (os.path.isfile(image_name) ==0):
+            if (os.path.isfile("thumbnails/{}.jpg".format(name)) == 0) and (os.path.isfile(image_name) ==0):
                 # check if there is an already downloaded image file
                 try:
                     """look for entry info from local database"""
@@ -101,7 +101,7 @@ def main():
                     print(img_list)
                     r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                     if r.status_code == 200:
-                        with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
+                        with open("thumbnails/{}.jpg".format(name), 'wb') as f:
                             r.raw.decode_content = True
                             shutil.copyfileobj(r.raw, f)
                     print("Done downloading image")
@@ -110,7 +110,7 @@ def main():
                     Label.image = image
                     preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
                     # edit dtored image data
-                    select_values[2] = "thumbnails\\{}.jpg".format(name)
+                    select_values[2] = "thumbnails/{}.jpg".format(name)
                     with open('series_table.json', 'w') as f:
                         json.dump(series_dict, f, indent=2)
 
@@ -124,7 +124,7 @@ def main():
                         print(img_list)
                         r = requests.get(img_url, stream=True, headers={'User-agent': 'Mozilla/5.0'})
                         if r.status_code == 200:
-                            with open("thumbnails\\{}.jpg".format(name), 'wb') as f:
+                            with open("thumbnails/{}.jpg".format(name), 'wb') as f:
                                 r.raw.decode_content = True
                                 shutil.copyfileobj(r.raw, f)
                         print("Done downloading file")
@@ -133,7 +133,7 @@ def main():
                         Label.image = image
                         preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
                         # edit dtored image data
-                        select_values[2] = "thumbnails\\{}.jpg".format(name)
+                        select_values[2] = "thumbnails/{}.jpg".format(name)
                         with open('series_table.json', 'w') as f:
                             json.dump(series_dict, f, indent=2)
 
@@ -155,7 +155,7 @@ def main():
                 try:
                     image = ImageTk.PhotoImage(Image.open(image_name))
                 except:
-                    image = ImageTk.PhotoImage(Image.open("thumbnails\\{}.jpg".format(name)))
+                    image = ImageTk.PhotoImage(Image.open("thumbnails/{}.jpg".format(name)))
                 Label.image = image
                 preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
 

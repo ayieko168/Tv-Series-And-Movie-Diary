@@ -1,3 +1,4 @@
+add thumbnails to files to be uploaded
 Add in-sotware movie details ie--Current episode, Air, Status
 add keyboard shortcuts to basic functions eg:enter bind to sighin button
 Use panedWindow widget

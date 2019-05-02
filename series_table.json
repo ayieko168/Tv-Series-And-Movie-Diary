@@ -1,1 +1,80 @@
-{}
+{
+  "The Big Bang Theory": [
+    10,
+    15,
+    "thumbnails/the-big-bang-theory.jpg",
+    "2019-01-12 05:43:06.812879"
+  ],
+  "Blindspot": [
+    4,
+    16,
+    "thumbnails/blindspot.jpg",
+    "2019-03-24 17:59:13.944508"
+  ],
+  "Black Mirror": [
+    2,
+    4,
+    "thumbnails/black-mirror.jpg",
+    "2019-02-10 21:00:58.063587"
+  ],
+  "Vikings": [
+    5,
+    20,
+    "thumbnails/vikings.jpg",
+    "2019-04-28 00:45:02.129567"
+  ],
+  "Westworld": [
+    1,
+    7,
+    "thumbnails/westworld.jpg",
+    "2019-01-12 05:43:28.952910"
+  ],
+  "Young Sheldon": [
+    2,
+    18,
+    "thumbnails/young-sheldon.jpg",
+    "2019-04-28 00:45:31.919609"
+  ],
+  "The Blacklist": [
+    2,
+    10,
+    "thumbnails/the-blacklist.jpg",
+    "2019-01-12 05:43:11.102885"
+  ],
+  "Dynasty": [
+    2,
+    13,
+    "thumbnails/",
+    "2019-02-23 10:03:11.900340"
+  ],
+  "The Good Doctor": [
+    2,
+    18,
+    "thumbnails/the-good-doctor.jpg",
+    "2019-04-28 00:44:41.306480"
+  ],
+  "Billions": [
+    2,
+    11,
+    "thumbnails/",
+    "2019-04-28 01:23:04.146479"
+  ],
+  "Attack On Titan": [
+    2,
+    25,
+    "thumbnails/",
+    "2019-04-29 22:02:44.879824"
+  ],
+  "Game Of Thrones": [
+    8,
+    7,
+    "thumbnails/",
+    "2019-04-29 20:57:32.077607"
+  ],
+  "Star Trek Discovery": [
+    1,
+    15,
+    "thumbnails\\star-trek-discovery.jpg",
+    "2019-05-02 08:47:48.533441"
+  ]
+}
