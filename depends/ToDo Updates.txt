@@ -6,6 +6,8 @@ add "All seen movies" json file (cant remove only add)
 add resizing thumbnail function for double click
 add "downloading/ loading thumbnail" to preview box
 fix scrollable prewview box
+fix clear data events
+
 
 ***********Done**********
 

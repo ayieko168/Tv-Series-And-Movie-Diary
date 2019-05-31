@@ -82,7 +82,7 @@ def main():
 
         print("using main viewer")
         print("online thumbs set to {}".format(online_thumbs.get()))
-        
+
         if (online_thumbs.get() == 1):
             """view the thumbnail of the selected item in the complete list"""
             # if online thumb is True
@@ -91,7 +91,7 @@ def main():
 
             name = "-".join(curItem.lower().split())
             image_name = select_values[2]
-            
+
             if (os.path.isfile("thumbnails/{}.jpg".format(name)) == 0) and (os.path.isfile(image_name) ==0):
                 # check if there is an already downloaded image file
                 try:
@@ -116,7 +116,7 @@ def main():
 
                 except KeyError:
                     print("Failed series image list....")
-                    
+
                     name = curItem
                     try:
                         img_list = imgs_dict[name]
@@ -139,7 +139,7 @@ def main():
 
                     except Exception as error_ml:
                         print("Failed using movie list Error :: \n", error_ml)
-                        
+
                         image = ImageTk.PhotoImage(Image.open(imageProcessor.resize_image(NoImageFilePath)))
                         Label.image = image
                         preview_box.window_create(index=1.0, window=Label(preview_box, image=image))
@@ -191,12 +191,12 @@ def main():
                 except:
                     # if not display:
                     print("Error: This is not a jpeg file please use\na jpeg image or download it from >Edit>DownloadImage")
-            
+
     def clear_data():
 
         query = messagebox.askyesnocancel(" Delete all user data", "Are you sure you\nwant to delete all the user data from \nlocal disk?\n\nNOTE: It wont affect your cloud data")
         query_details = messagebox.askyesno("CLEAR DATA?", "Sorry, Do you also Want to\nclear your personal data? ")
-        
+
         print(query_details)
         if query == 1:
             # default data
@@ -219,7 +219,7 @@ def main():
             print("clearing the series file...")
             with open("series_table.json", "w") as ser_fo:
                 json.dump(series_dict_data, ser_fo, indent=2)
-           
+
             if query_details == 1:
                 print("clearing the details file..")
                 with open("details.json", "w") as det_fo:
@@ -295,7 +295,7 @@ def main():
 
             with open('series_table.json', 'w') as f:
                 json.dump(series_dict, f, indent=2)
-            
+
             treeview.delete(treeview.focus())
             print("Done Deleting {} from watching list".format(curItem))
 
@@ -329,7 +329,7 @@ def main():
 
                 if editent2var.get() != select_values[2]:  # pic
                     select_values[3] = "{}".format(datetime.datetime.now())  # update the modify date
-                    select_values[2] = editent2var.get() 
+                    select_values[2] = editent2var.get()
                     with open('series_table.json', 'w') as f:
                         json.dump(series_dict, f, indent=2)
 
@@ -553,7 +553,7 @@ def main():
             elif prefered_site == "yifi":
                 webbrowser.open_new_tab("https://yts.am/browse-movies/{}/all/all/0/latest".format(curItem))
             else:
-                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem)) 
+                webbrowser.open_new_tab('https://eztv.io/search/{}'.format(curItem))
 
         def start_watching_wishlist():
 
@@ -576,7 +576,7 @@ def main():
                 other_categories_foData["wish_list"] = wishlistDict
                 json.dump(other_categories_foData, other_categories_fo2, indent=2)  # write the edited wished to the file
                 print("done writing relevent changes...")
-            
+
             wishlist_treeview.delete(wishlist_treeview.focus())
             lis = {curItem : selectetItemData_wishlist}
             print(lis)
@@ -604,7 +604,7 @@ def main():
                         completeDict[curItem] = select_values
                         json.dump(other_categories_foData, f, indent=2)
                         print("done writing changes")
-                        
+
                 if editspin2.get() != '0':  # episode
                     select_values[1] = int(editspin2.get())
                     select_values[3] = "{}".format(datetime.datetime.now().date())  # update the modify date
@@ -621,7 +621,7 @@ def main():
                         completeDict[editentvar.get()] = select_values  # set the values of the edited title
                         json.dump(other_categories_foData, f, indent=2)
                         print("done writing changes")
-                
+
                 edittop.destroy()
 
             if curItem != "":  # test if an item is highlighted first
@@ -663,17 +663,17 @@ def main():
                 selected_values_wishlisted = wishlist_Dictionary[curItem]
                 del wishlist_Dictionary[curItem]
                 wishlist_treeview.delete(wishlist_treeview.focus())
-                # the sellected title is removed from wishlist 
+                # the sellected title is removed from wishlist
                 with open("Other_title_categories.json", "w") as oth_fo2:
                     json.dump(other_Dictionary, oth_fo2, indent=2)
-            
+
             with open("Other_title_categories.json", "r") as oth_fo3:
                 other_Dictionary = json.load(oth_fo3)
                 complete_Dictionary = other_Dictionary["complete"]
                 complete_Dictionary[curItem] = selected_values_wishlisted
                 with open("Other_title_categories.json", "w") as oth_fo4:
                     json.dump(other_Dictionary, oth_fo4, indent=2)
-        
+
         def watch_online_wishlist():
 
             curItem = wishlist_treeview.focus().strip('#')
@@ -693,6 +693,11 @@ def main():
                 webbrowser.open_new_tab("https://www2.9anime.to/search?keyword={}".format(curItem))
             else:
                 webbrowser.open_new_tab("http://fmovies.pm/search-movies/{}.html".format(curItem))
+
+        def watch_trailler_wishlist():
+            curItem = wishlist_treeview.focus().strip('#')
+
+            webbrowser.open_new_tab("https://www.youtube.com/results?search_query={}".format(curItem))
 
         def delete_item_wishlist():
             """delete the selected item"""
@@ -741,7 +746,7 @@ def main():
                 print("Failed series image list....")
                 with open("Movies_List.json", "r") as f:
                     imgs_dict = json.load(f)
-                
+
                 name = curItem
                 try:
                     img_list = imgs_dict[name]
@@ -764,7 +769,7 @@ def main():
             except Exception as local_excep:
 
                 print("ERROR :: " + str(local_excep))
-        
+
         def onbreak_wishlist():
 
             curItem = wishlist_treeview.focus().strip('#')
@@ -775,10 +780,10 @@ def main():
                 selected_values_wishlisted = wishlist_Dictionary[curItem]
                 del wishlist_Dictionary[curItem]
                 wishlist_treeview.delete(wishlist_treeview.focus())
-                # the sellected title is removed from wishlist 
+                # the sellected title is removed from wishlist
                 with open("Other_title_categories.json", "w") as oth_fo2:
                     json.dump(other_Dictionary, oth_fo2, indent=2)
-            
+
             with open("Other_title_categories.json", "r") as oth_fo3:
                 other_Dictionary = json.load(oth_fo3)
                 onbraek_Dictionary = other_Dictionary["on_break"]
@@ -812,6 +817,7 @@ def main():
         popup_menu.add_separator()
         popup_menu.add_command(label="View Thumbnail", command=view_thumbnail_wishlist)
         popup_menu.add_separator()
+        popup_menu.add_command(label="Watch trailler", command=watch_trailler_wishlist)
         popup_menu.add_command(label="Watch online", command=watch_online_wishlist)
         popup_menu.add_command(label="Download It..", command=download_it_wishliat)
         popup_menu.add_command(label="On Beak", command=onbreak_wishlist)
@@ -847,7 +853,7 @@ def main():
                 other_categories_foData["on_break"] = onbreakDict
                 json.dump(other_categories_foData, other_categories_fo2, indent=2)  # write the edited complete to the file
                 print("done writing relevent changes...")
-            
+
             onbreak_treeview.delete(onbreak_treeview.focus())
             lis = {curItem : selectetItemData_complete}
             print(lis)
@@ -861,10 +867,10 @@ def main():
                 selected_values_wishlisted = onbreak_Dictionary[curItem]
                 del onbreak_Dictionary[curItem]
                 onbreak_treeview.delete(onbreak_treeview.focus())
-                # the sellected title is removed from wishlist 
+                # the sellected title is removed from wishlist
                 with open("Other_title_categories.json", "w") as oth_fo2:
                     json.dump(other_Dictionary, oth_fo2, indent=2)
-            
+
             with open("Other_title_categories.json", "r") as oth_fo3:
                 other_Dictionary = json.load(oth_fo3)
                 complete_Dictionary = other_Dictionary["complete"]
@@ -888,7 +894,7 @@ def main():
                 print("Failed to use series list")
 
                 webbrowser.open_new_tab("https://www.imdb.com/find?ref_=nv_sr_fn&q={}&s=tt".format(curItem))
-        
+
         def view_thumbnail_break():
 
             """view the thumbnail of the selected item in the complete list"""
@@ -917,7 +923,7 @@ def main():
                 print("Failed series image list....")
                 with open("Movies_List.json", "r") as f:
                     imgs_dict = json.load(f)
-                
+
                 name = curItem
                 try:
                     img_list = imgs_dict[name]
@@ -958,7 +964,7 @@ def main():
             with open('Other_title_categories.json', 'w') as f:
                 json.dump(other_categories_foData, f, indent=2)
                 print("done deleting the title ", curItem)
-            
+
             onbreak_treeview.delete(onbreak_treeview.focus())
 
         # delete popup menu
@@ -1001,12 +1007,12 @@ def main():
                 other_categories_foData["complete"] = completeDict
                 json.dump(other_categories_foData, other_categories_fo2, indent=2)  # write the edited complete to the file
                 print("done writing relevent changes...")
-            
+
             complete_tereeview.delete(complete_tereeview.focus())
             lis = {curItem : selectetItemData_complete}
             print(lis)
             list_movies(lis)
-            
+
         def view_thumbnail_complete():
             """view the thumbnail of the selected item in the complete list"""
             curItem = complete_tereeview.focus().strip('#')
@@ -1034,7 +1040,7 @@ def main():
                 print("Failed series image list....")
                 with open("Movies_List.json", "r") as f:
                     imgs_dict = json.load(f)
-                
+
                 name = curItem
                 try:
                     img_list = imgs_dict[name]
@@ -1087,7 +1093,7 @@ def main():
             with open('Other_title_categories.json', 'w') as f:
                 json.dump(other_categories_foData, f, indent=2)
                 print("done deleting the title ", curItem)
-            
+
             complete_tereeview.delete(complete_tereeview.focus())
 
         # compete tab popup menu
@@ -1308,7 +1314,7 @@ def main():
         movie_titleent = Entry(add_wishlist_window, bg='white', width=35, fg="black")
         movie_titleent.pack(side=LEFT, after=movie_titlelb)
         movie_titleent.focus_set()
-        
+
 
         addbut = Button(add_wishlist_window, bg='white', text='add'.upper())
         addbut.bind('<Button-1>', add_wish)
@@ -1353,9 +1359,9 @@ def main():
             abt_text.bind('<Button-3>', about_right_click)
         elif operating_system == 'darwin':
             abt_text.bind('<Button-2>', about_right_click)
-        
+
         abt_text.config(exportselection=1, state=DISABLED)
-    
+
     # menu bar
 
     watchsite_menu = Menu(tearoff=0)
