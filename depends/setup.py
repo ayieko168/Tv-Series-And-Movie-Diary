@@ -40,22 +40,22 @@ def window_setup():
 
     print("installing pillow module...")
     sleep(0.1)
-    os.system("pip install --user pillow")
+    os.system("python -m pip install --user pillow")
     print("done installing pillow\n\n")
 
     print("installing requests module...")
     sleep(0.1)
-    os.system("pip install --user requests")
+    os.system("python -m pip install --user requests")
     print("done installing requests module\n\n")
 
     print("installing pygithub module...")
     sleep(0.1)
-    os.system("pip install --user pygithub")
+    os.system("python -m pip install --user pygithub")
     print("done installing pygithub module\n\n")
 
     print("installing pynput module...")
     sleep(0.1)
-    os.system("pip install --user pynput")
+    os.system("python -m pip install --user pynput")
     print("done installing pynput module\n\n")
 
     print("done all operations.\nbye\n\n")
