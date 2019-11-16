@@ -1,0 +1,113 @@
+{
+    "currently_watching" : {
+        "The Game of thrones": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ],
+        "Claws": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    
+    },
+
+    "complete_tv_shows" : {
+        "Billions": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    },
+
+    "shows_on_break" : {
+        "Young Sheldon": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    },
+
+    "wish_list" : {
+        "The Black Godfather": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    },
+
+    "seen_movies" : {
+        "Lion King": [
+            "2019-11-16 10:12:32.917734"
+        ]
+    },
+
+    "recycle_bin" : {
+        "Sdfdfdsfsd": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    },
+
+    "details" : {
+        "use": "ayieko168",
+        "pas": [
+          513659438,
+          513659443,
+          513659447,
+          513659436,
+          513659449,
+          513659429,
+          513659441,
+          513659430,
+          513659429,
+          513659435,
+          513659443,
+          513659381,
+          513659382,
+          513659383,
+          513659380,
+          513659413,
+          513659367
+        ],
+        "state": "False"
+    },
+
+    "watch_sites" : {
+        "Io-Movies": [
+            "http://yts.com"
+        ],
+        "Putlockers": [
+            "http://yts.com"
+        ],
+        "Fmovies": [
+            "http://yts.com"
+        ]
+    
+    
+    },
+
+    "download_sites" : {
+        "The Pirate Bay": [
+            "http://thepiratesbay.com"
+        ]
+    },
+
+    "search_dict" : {
+        "Sdfdfdsfsd": [
+            1,
+            2,
+            "thumbnails/",
+            "2019-11-16 10:12:32.917734"
+        ]
+    }
+
+}

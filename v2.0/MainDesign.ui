@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>550</width>
+    <height>635</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>0</y>
+      <width>271</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="page">
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Currently Watching TV Shows : 1</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="currentlyWatchingTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>261</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>15</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Se</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Ep</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_2">
+     <widget class="QTableWidget" name="completedTvShowsTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>261</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>261</width>
+        <height>571</height>
+       </size>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="verticalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="showGrid">
+       <bool>false</bool>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>false</bool>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>15</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Se</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Ep</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Complete date</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Complete TV Shows : 2</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_3">
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Tv Shows on Break : 3</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="onBreakTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>261</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>15</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Se</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Ep</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date Braked</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_4">
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Wish List : 4</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="wishListTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>261</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>15</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date added</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_5">
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> Seen Movies : 5</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="seenMoviesTable">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>261</width>
+        <height>571</height>
+       </rect>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>15</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>Title</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Date Seen</string>
+       </property>
+      </column>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_6">
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Search Resalts : 6</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="geometry">
+       <rect>
+        <x>74</x>
+        <y>550</y>
+        <width>171</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>View More info On Your Browser</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>240</y>
+      <width>261</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>PREVIW BOX </string>
+    </property>
+    <widget class="QGraphicsView" name="previewBoxGraphicsView">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>15</y>
+       <width>257</width>
+       <height>333</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Login Status: </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="loginStatusLabel">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>10</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="statusTip">
+     <string>Connection status</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="lineWidth">
+     <number>5</number>
+    </property>
+    <property name="midLineWidth">
+     <number>6</number>
+    </property>
+    <property name="text">
+     <string> NOT LOGGED ON</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>261</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <property name="title">
+     <string>SEARCH : </string>
+    </property>
+    <widget class="QLineEdit" name="searchTitleEntry">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>231</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="placeholderText">
+      <string> Title</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="searchButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Search</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>191</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Source : </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="searchSourceLocalCheck">
+        <property name="text">
+         <string>Local</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="searchSourceLocalOnline">
+        <property name="text">
+         <string>Online</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="searchStatusLabel">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>100</y>
+       <width>101</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="addNewEntryButton">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>190</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ADD A NEW TITLE...</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>550</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuDownload_Sites">
+     <property name="title">
+      <string>Download Sites</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="menuWatch_Sites">
+     <property name="title">
+      <string>Watch Sites</string>
+     </property>
+    </widget>
+    <addaction name="actionPush_My_Data"/>
+    <addaction name="actionPull_My_Data"/>
+    <addaction name="separator"/>
+    <addaction name="menuWatch_Sites"/>
+    <addaction name="menuDownload_Sites"/>
+    <addaction name="actionEdit_Sites"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options </string>
+    </property>
+    <addaction name="actionUpdate_List"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogin"/>
+    <addaction name="actionLogout"/>
+    <addaction name="actionCreate_Account"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_To_Wish_List"/>
+    <addaction name="actionAdd_Title"/>
+    <addaction name="separator"/>
+    <addaction name="actionOnline_Thumbnails"/>
+    <addaction name="actionClear_All_Data"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuCurent_Table">
+     <property name="title">
+      <string>Curent Table : </string>
+     </property>
+     <property name="separatorsCollapsible">
+      <bool>true</bool>
+     </property>
+     <addaction name="actionCurrently_Watching"/>
+     <addaction name="actionComplete_Tv_Shows"/>
+     <addaction name="actionShows_on_Break"/>
+     <addaction name="actionWish_List"/>
+     <addaction name="actionSeen_Movies"/>
+     <addaction name="separator"/>
+     <addaction name="actionSearch_Results_Tab"/>
+    </widget>
+    <addaction name="menuCurent_Table"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionVideo_Tutorials"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionPush_My_Data">
+   <property name="text">
+    <string>Push My Data</string>
+   </property>
+  </action>
+  <action name="actionPull_My_Data">
+   <property name="text">
+    <string>Pull My Data</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionUpdate_List">
+   <property name="text">
+    <string>Update List</string>
+   </property>
+  </action>
+  <action name="actionLogin">
+   <property name="text">
+    <string>Login</string>
+   </property>
+  </action>
+  <action name="actionLogout">
+   <property name="text">
+    <string>Logout</string>
+   </property>
+  </action>
+  <action name="actionCreate_Account">
+   <property name="text">
+    <string>Create Account</string>
+   </property>
+  </action>
+  <action name="actionAdd_To_Wish_List">
+   <property name="text">
+    <string>Add To Wish List</string>
+   </property>
+  </action>
+  <action name="actionOnline_Thumbnails">
+   <property name="text">
+    <string>Online Thumbnails</string>
+   </property>
+  </action>
+  <action name="actionAdd_Title">
+   <property name="text">
+    <string>Add New Title</string>
+   </property>
+  </action>
+  <action name="actionClear_All_Data">
+   <property name="text">
+    <string>Clear All Data</string>
+   </property>
+  </action>
+  <action name="actionCurrently_Watching">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Currently Watching</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+1</string>
+   </property>
+  </action>
+  <action name="actionComplete_Tv_Shows">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Complete Tv Shows</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+2</string>
+   </property>
+  </action>
+  <action name="actionWish_List">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Wish List</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+4</string>
+   </property>
+  </action>
+  <action name="actionSeen_Movies">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Seen Movies</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+5</string>
+   </property>
+  </action>
+  <action name="actionVideo_Tutorials">
+   <property name="text">
+    <string>Video Tutorials</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionEdit_Sites">
+   <property name="text">
+    <string>Edit Sites</string>
+   </property>
+  </action>
+  <action name="actionEZTV">
+   <property name="text">
+    <string>Fmovies</string>
+   </property>
+  </action>
+  <action name="actionPutlocker">
+   <property name="text">
+    <string>Putlocker</string>
+   </property>
+  </action>
+  <action name="actionIO_Movies">
+   <property name="text">
+    <string>IO-Movies</string>
+   </property>
+  </action>
+  <action name="action9_Anime">
+   <property name="text">
+    <string>9-Anime</string>
+   </property>
+  </action>
+  <action name="actionPirates_Bay">
+   <property name="text">
+    <string>Pirates Bay</string>
+   </property>
+  </action>
+  <action name="actionYIFI_Movies">
+   <property name="text">
+    <string>YIFI Movies</string>
+   </property>
+  </action>
+  <action name="actionTorentCouch">
+   <property name="text">
+    <string>TorentCouch</string>
+   </property>
+  </action>
+  <action name="actionEZTV_2">
+   <property name="text">
+    <string>EZTV</string>
+   </property>
+  </action>
+  <action name="actionShows_on_Break">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shows on Break</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+3</string>
+   </property>
+  </action>
+  <action name="actionSearch_Results_Tab">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Search Results Tab</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+6</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
