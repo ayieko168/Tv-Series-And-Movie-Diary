@@ -77,111 +77,33 @@
       513659413,
       513659367
     ],
-    "occupied": "True"
+    "state": "False"
   },
   "watch_sites": {
     "Io-Movies": [
-      "Io-Movies",
-      "Io-Movies",
-      "Io-Movies",
       "http://iomovies.com"
     ],
     "Putlockers": [
-      "Putlockers",
-      "Putlockers",
-      "Putlockers",
       "http://putlocker.com"
     ],
     "Fmovies": [
-      "Fmovies",
-      "Fmovies",
-      "Fmovies",
       "http://fmovies.com"
     ],
     "Stahito": [
-      "Stahito",
-      "Stahito",
-      "Stahito",
       "https://stahito_kenya.org"
-    ],
-    "Movie Streamer": [
-      "Movie Streamer",
-      "Movie Streamer",
-      "Movie Streamer",
-      "https://movie_streamer/movies.com"
     ]
   },
   "download_sites": {
     "The Pirate Bay": [
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
-      "The Pirate Bay",
       "http://thepiratesbay.com"
     ],
     "EZTV": [
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
-      "EZTV",
       "http://eztv.com"
     ],
     "Torrect Couch": [
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
-      "Torrect Couch",
       "http://torrentcouch.com"
     ],
     "X3777": [
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
-      "X3777",
       "http://x3777.com"
     ]
   },
