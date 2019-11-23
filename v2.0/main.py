@@ -1,17 +1,20 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from MainDesign import *
-from dialogs.MessageBox import showMessage
+import dialogs.MessageBox as messagebox
 from dialogs import cridentialsDialog
 from dialogs import wishListDialog
 from dialogs import addNewTitleDialog
 from dialogs import websitesEditDialog
-from utils import checker
+from utils import checker, search_function
 import webbrowser
-import json, os, time
+import json, os, time, shutil
 from github import Github
 
 data_base = {}
+data_base_path = ""
+template_path = ""
+values_format = "title, type, season, episode, datecomplete, datebrake, dateadded, dateseen"
 
 class App(QMainWindow):
 
@@ -30,14 +33,53 @@ class App(QMainWindow):
         self.ui.menuDownload_Sites.triggered[QAction].connect(self.menuDownload_SitesCMD)
         self.ui.menuHelp.triggered[QAction].connect(self.menuHelpCMD)
         self.ui.addNewEntryButton.clicked.connect(self.addNewEntryButtonCMD)
+        self.ui.searchTitleEntry.textChanged.connect(self.flySearchTitleFunction)
+        self.ui.searchButton.clicked.connect(self.searchTitleFunction)
+        self.ui.searchButton.clicked.connect(self.flySearchTitleFunction)
+
+        
+
+        ## KEY BINDING
+        # self.ui.addNewEntryButton.setShortcut("F6")
 
         ## SETUP 
+        setUpPaths()
         self.setUpTables()
         self.initialDataPopulation()
+        updateSearchList()
 
-        ## VARIABLES
-        self.selected_watch_Site = ""
-        self.selected_download_Site = ""
+        # Set Up Richt Click Functionality
+        self.ui.currentlyWatchingTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.currentlyWatchingTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
+        self.ui.completedTvShowsTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.completedTvShowsTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
+        self.ui.onBreakTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.onBreakTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
+        self.ui.wishListTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.wishListTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
+        self.ui.seenMoviesTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.seenMoviesTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
+
+    def searchTitleFunction(self):
+
+        title = self.ui.searchTitleEntry.text()
+        if self.ui.searchSourceOnlineCheck.isChecked():
+            print("not fly online = ", title)
+
+    def flySearchTitleFunction(self):
+
+        title = self.ui.searchTitleEntry.text()
+
+        if self.ui.searchSourceLocalCheck.isChecked():
+            # print("fly local = ", title)
+
+            searchList = getDataBase()["search_dict"]
+            self.ui.searchStatusLabel.setText("Searching...")
+            result = search_function.search_the_word(searchList, title)
+            match = result["match"]
+            self.ui.searchStatusLabel.setText(f"Match :: {match}")
+
+            print(f"results for {title} is {result}")
 
     def menuViewCMD(self, q):
         selection = q.text()
@@ -83,31 +125,56 @@ class App(QMainWindow):
         
         elif selection == "Add New Title":
 
-            addObj = addTitleDialogClass()
-            addObj.run()
-            print(addObj.getData())
+            self.addNewEntryButtonCMD()
+
+        elif selection == "Clear All Data":
+
+            ret = messagebox.showWarningMessage("All your data will be lost.\nAre you sure you want to clear all your data?")
+            if ret == "Yes":
+                print("clear data")
+                
+
+                with open(template_path) as tempFo:
+                    tempDict = json.load(tempFo)
+                
+                with open(data_base_path, "w") as destFo:
+                    json.dump(tempDict, destFo, indent=2, separators=(',', ':  '))
+                
+                self.initialDataPopulation()
+
+        elif selection == "Update Local Search List":
+
+            updateSearchList()
 
     def menuHelpCMD(self, q):
         selection = q.text()
         print(f"open {selection} help dialog")
 
+        if selection == "Video Tutorials":
+    
+            webbrowser.open_new_tab("https://www.youtube.com/watch?v=2lI5CvZjBPI&list=PLYBkj59Lkv1rtz6lrjRHIizK3kTTH41vB")
+        
+        elif selection == "About":
+
+            pass
+
     def menuDownload_SitesCMD(self, q):
 
         # INIT
         selection = q.text()
-        self.selectionLogic(selection)
+        self.selectionLogic(selection, self.ui.menuDownload_Sites)
 
         self.selected_download_Site = self.download_sites_Dict[selection][0]
-        print("selected_download_Site set to  = ", self.selected_download_Site)
+        f"selected_watch_Site set to  = {selection}, link = {self.selected_download_Site_Link}"
         
     def menuWatch_SitesCMD(self, q):
         
         # INIT
         selection = q.text()
-        self.selectionLogic(selection)
+        self.selectionLogic(selection, self.ui.menuWatch_Sites)
 
-        self.selected_watch_Site = self.watch_sites_Dict[selection][0]
-        print("selected_watch_Site set to  = ", self.selected_watch_Site)
+        self.selected_watch_Site_Link = self.watch_sites_Dict[selection][0]
+        print(f"selected_watch_Site set to  = {selection}, link = {self.selected_watch_Site_Link}")
         
     def menuFileCMD(self, q):
         command = q.text()
@@ -121,20 +188,49 @@ class App(QMainWindow):
         elif command == "Pull My Data":
             print("pull")
         
+        elif command == "Buck Up My Data":
+
+            print("create buck up")
+            user = os.getlogin()
+
+            data_base_dst = f"C:\\Users\\{user}\\Desktop\\TvShow_Diary_Database_buckup.buk"
+
+            shutil.copyfile(data_base_path, data_base_dst)
+
+            print("done.")
+
+        elif command == "Load Data from A Buckup":
+
+            filepath = QFileDialog.getOpenFileName(filter = "Buck Up Files (*.buk)")
+
+            ## Load the data from it and then dump the data to the programms data_base
+            with open(filepath) as buckFo:
+                data_base = json.load(buckFo)
+            
+            writeDataBase(data_base)
+
+            self.initialDataPopulation()
+
+            print("done.")
+
         elif command == "Edit Sites":
             print("edit sites")
 
             webEd = websitesEditDialogClass()
             webEd.run()
             watch, download = webEd.getData()
+            ret = webEd.returnCode()
 
-            data_base = getDataBase()
-            data_base["watch_sites"] = watch
-            data_base["download_sites"] = download
+            if ret == 0:
+                data_base = getDataBase()
+                data_base["watch_sites"] = watch
+                data_base["download_sites"] = download
 
-            writeDataBase(data_base)
-            
-            self.initialDataPopulation()
+                writeDataBase(data_base)
+                
+                self.initialDataPopulation()
+            else:
+                print("nothing to write")
 
         elif command == "Exit":
             print("exit")
@@ -147,8 +243,8 @@ class App(QMainWindow):
            the watch sites and download sites. This also sets
            the default selected site option.
            """
-        DIR = os.getcwd()
-        with open(f"{DIR}\\v2.0\\utils\\data_base.json") as data_baseFo:
+        
+        with open(data_base_path) as data_baseFo:
             data_base = json.load(data_baseFo)
 
             ## Individual data Dictionaries
@@ -172,28 +268,28 @@ class App(QMainWindow):
 
         # populate currently_watching table
         for k, v in sorted(self.currently_watching_Dict.items()):
-            v.insert(0, k)
-            self.addTableItem(self.ui.currentlyWatchingTable, v)
+            currently_watching_values = [v[0], v[2], v[3]]
+            self.addTableItem(self.ui.currentlyWatchingTable, currently_watching_values)
         
         # populate complete_tv_shows table
         for k, v in sorted(self.complete_tv_shows_Dict.items()):
-            v.insert(0, k)
-            self.addTableItem(self.ui.completedTvShowsTable, v)
+            complete_tv_shows_values = [v[0], v[2], v[3], v[4]]
+            self.addTableItem(self.ui.completedTvShowsTable, complete_tv_shows_values)
         
         # populate shows_on_break table
         for k, v in sorted(self.shows_on_break_Dict.items()):
-            v.insert(0, k)
-            self.addTableItem(self.ui.onBreakTable, v)
+            shows_on_break_values = [v[0], v[2], v[3], v[5]]
+            self.addTableItem(self.ui.onBreakTable, shows_on_break_values)
         
         # populate wish_list table
         for k, v in sorted(self.wish_list_Dict.items()):
-            v.insert(0, k)
-            self.addTableItem(self.ui.wishListTable, v)
+            wish_list_values = [v[0], v[1], v[6]]
+            self.addTableItem(self.ui.wishListTable, wish_list_values)
         
         # populate seen_movies table
         for k, v in sorted(self.seen_movies_Dict.items()):
-            v.insert(0, k)
-            self.addTableItem(self.ui.seenMoviesTable, v)
+            seen_movies_values = [v[0], v[7]]
+            self.addTableItem(self.ui.seenMoviesTable, seen_movies_values)
         
 
         ## POPULATE THE OPTIONAL MENU OPTIONS
@@ -202,24 +298,29 @@ class App(QMainWindow):
         self.ui.menuDownload_Sites.clear()
 
         # populate the websites
-        STATE = True
         for k, v in sorted(self.watch_sites_Dict.items()):
             actionOb = self.ui.menuWatch_Sites.addAction(k)
             actionOb.setCheckable(True)
-            actionOb.setChecked(STATE)
-            STATE = False
+            if k == self.details_Dict["watch"]:
+                actionOb.setChecked(True)
+                self.selected_watch_Site_Link = v[0]
+            else:
+                actionOb.setChecked(False)
         
-        STATE = True
         for k, v in sorted(self.download_sites_Dict.items()):
             actionOb = self.ui.menuDownload_Sites.addAction(k)
             actionOb.setCheckable(True)
-            actionOb.setChecked(STATE)
-            STATE = False
+            if k == self.details_Dict["download"]:
+                actionOb.setChecked(True)
+                self.selected_download_Site_Link = v[0]
+            else:
+                actionOb.setChecked(False)
 
     def addTableItem(self, table, values=[]):
         """Add an item at the bottom of the list in 'table', value
            is a list of values of the row created.
            table is a QTablbeWidget object.
+           <values> is a list that starts with the Item Name then the values.
            """
 
         rowPosition = table.rowCount()
@@ -233,8 +334,24 @@ class App(QMainWindow):
 
     def addNewEntryButtonCMD(self):
 
-        self.selectionLogic()
-        
+        ## open the add title dialog and get the entered data
+        newDialog = addTitleDialogClass()
+        newDialog.run()
+        data = newDialog.getData()
+        print(data[0])
+
+        ## Add the title in to the respective table and update the database
+        if (data[0] == "TvShow") and (data[1] != ""):
+            self.addTableItem(self.ui.currentlyWatchingTable, data[1:])
+            writeTableToDataBase(self.ui.currentlyWatchingTable, "currently_watching")
+            updateSearchList()
+        elif (data[0] == "Movie") and (data[1] != ""):
+            self.addTableItem(self.ui.seenMoviesTable, data[1:])
+            writeTableToDataBase(self.ui.seenMoviesTable, "seen_movies")
+            updateSearchList()
+        else:
+            print("nothing to write")
+         
     def setUpTables(self):
         """set the basic pproperties of the tables"""
 
@@ -264,9 +381,13 @@ class App(QMainWindow):
         header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(1, QtGui.QHeaderView.Stretch)
 
+        self.ui.stackedWidget.setCurrentIndex(0)
+
     def menuCurent_TableCMD(self, q):
         """swithch the current tab to a selection you make."""
+        
         command = q.text()
+        self.selectionLogic(command, self.ui.menuCurent_Table)
 
         print(command)
         
@@ -294,12 +415,12 @@ class App(QMainWindow):
             print(f"switch tab to {command}")
             self.ui.stackedWidget.setCurrentIndex(5)
 
-    def selectionLogic(self, selection):
+    def selectionLogic(self, selection, menu):
         """Set all other menu options not selected to False
            when one of the menu options are set. This only
            applie to Qaction objects that are set to checkable."""
 
-        for actn in self.ui.menuWatch_Sites.actions():
+        for actn in menu.actions():
             if actn.text() != selection:
                 actn.setChecked(False)
 
@@ -309,7 +430,220 @@ class App(QMainWindow):
 
         g = Github(user, passw)
 
+    @pyqtSlot(QPoint)
+    def on_customContextMenuRequested(self, pos):
+
+        table = QApplication.focusWidget()
+        tableName = table.objectName()
+
+        top_menu = QMenu(self)
+        menu = top_menu.addMenu("Menu")
+
+        Edit = menu.addAction("Edit")
+        menu.addSeparator()
+        moveTo = menu.addMenu("Move title to...")
+        menu.addSeparator()
+        trailer = menu.addAction("Watch Trailer")
+        viewThumb = menu.addAction("View Thumbnail")
+        menu.addSeparator()
+        download = menu.addAction("Download")
+        watch = menu.addAction("Wathch Online")
+        viewDetails = menu.addAction("Vied Details")
+        menu.addSeparator()
+        delete = menu.addAction("Delete")
+
+        currentlyWatching = moveTo.addAction("Currentlt watching Tab")
+        complete = moveTo.addAction("Complete Show Tab")
+        onBreak = moveTo.addAction("On Breake Tab")
+        wishList = moveTo.addAction("Wish List Tab")
+        seen = moveTo.addAction("Seen Movies Tab")
+
+        if tableName == "currentlyWatchingTable":
+            key = "currently_watching"
+        elif tableName == "completedTvShowsTable":
+            key = "complete_tv_shows"
+        elif tableName == "onBreakTable":
+            key = "shows_on_break"
+        elif tableName == "wishListTable":
+            key = "wish_list"
+        elif tableName == "seenMoviesTable":
+            key = "seen_movies"
         
+        def getItemData(itemIndex):
+            data = []
+
+            for i in range(table.columnCount()):
+                print(i)
+                try:
+                    data.append(table.item(itemIndex, i).text())
+                except:
+                    pass
+
+            return data
+        
+
+        action = menu.exec_(QtGui.QCursor.pos())
+
+        if action == Edit:
+            # do this
+            pass
+        
+        elif action == currentlyWatching:
+            # tabel = QTableWidget.objectName
+                # QTableWidget.columnAt()
+                # QModelIndex.row()
+                # QTableWidgetItem.text
+                # print(f"item index = {item_index}")
+                # print(table.itemAt(item_index, 0))
+
+            item_row = table.currentIndex().row()
+            itemName = table.item(item_row, 0).text()
+            itemData = getItemData(item_row)
+            
+            print(f"item Selected = {itemName}")
+            print(f"item data = {itemData}")
+
+            # Remove from this tables data base
+            table.removeRow(item_row)
+            writeTableToDataBase(table, key)
+
+            # Add to desired data base
+            self.addTableItem(self.ui.currentlyWatchingTable, itemData)
+            writeTableToDataBase(self.ui.currentlyWatchingTable, "currently_watching")
+  
+        elif action == complete:
+            item_row = table.currentIndex().row()
+            itemName = table.item(item_row, 0).text()
+            itemData = getItemData(item_row)
+            
+            print(f"item Selected = {itemName}")
+            print(f"item data = {itemData}")
+
+            # Remove from this tables data base
+            table.removeRow(item_row)
+            writeTableToDataBase(table, key)
+
+            # Add to desired data base
+            self.addTableItem(self.ui.completedTvShowsTable, itemData)
+            writeTableToDataBase(self.ui.completedTvShowsTable, "complete_tv_shows")
+
+        elif action == onBreak:
+            item_row = table.currentIndex().row()
+            itemName = table.item(item_row, 0).text()
+            itemData = getItemData(item_row)
+            
+            print(f"item Selected = {itemName}")
+            print(f"item data = {itemData}")
+
+            # Remove from this tables data base
+            table.removeRow(item_row)
+            writeTableToDataBase(table, key)
+
+            # Add to desired data base
+            self.addTableItem(self.ui.onBreakTable, itemData)
+            writeTableToDataBase(self.ui.onBreakTable, "shows_on_break")
+
+        elif action == wishList:
+            item_row = table.currentIndex().row()
+            itemName = table.item(item_row, 0).text()
+            itemData = getItemData(item_row)
+            
+            print(f"item Selected = {itemName}")
+            print(f"item data = {itemData}")
+
+            # Remove from this tables data base
+            table.removeRow(item_row)
+            writeTableToDataBase(table, key)
+
+            # Add to desired data base
+            self.addTableItem(self.ui.wishListTable, itemData)
+            writeTableToDataBase(self.ui.wishListTable, "wish_list")
+
+        elif action == seen:
+            item_row = table.currentIndex().row()
+            itemName = table.item(item_row, 0).text()
+            itemData = getItemData(item_row)
+            
+            print(f"item Selected = {itemName}")
+            print(f"item data = {itemData}")
+
+            # Remove from this tables data base
+            table.removeRow(item_row)
+            writeTableToDataBase(table, key)
+
+            # Add to desired data base
+            self.addTableItem(self.ui.seenMoviesTable, itemData)
+            writeTableToDataBase(self.ui.seenMoviesTable, "seen_movies")
+
+        elif action == trailer:
+            item_row = table.currentIndex().row()
+            curItem = table.item(item_row, 0).text()
+
+            webbrowser.open_new_tab("https://www.youtube.com/results?search_query={}".format(curItem))
+
+        elif action == viewThumb:
+            # do this
+            pass
+        elif action == download:
+            title = table.item(table.currentIndex().row(), 0).text()
+
+            self.download(title)
+
+        elif action == watch:
+
+            title = table.item(table.currentIndex().row(), 0).text()
+
+            self.watch(title)
+
+        elif action == viewDetails:
+            # do this
+            pass
+        elif action == delete:
+            # do this
+            pass
+        
+    def watch(self, title):
+
+        print(f"watch {title}")
+        title = title.lower()
+        link = self.selected_watch_Site_Link
+
+        try:
+            link = link.replace("{}", title)
+            webbrowser.open_new_tab(link)
+        except Exception as e:
+            print("exception = ", e)
+            webbrowser.open_new_tab(link)
+
+        print(link, title)
+
+    def download(self, title):
+
+        print(f"download {title}")
+        title = title.lower()
+        link = self.selected_download_Site_Link
+
+        try:
+            link = link.replace("{}", title)
+            webbrowser.open_new_tab(link)
+        except Exception as e:
+            print("exception = ", e)
+            webbrowser.open_new_tab(link)
+
+        print(link, title)
+
+    # def update
+
+
+
+
+
+
+
+
+
+
+
 
 class LoginDialogClass(QDialog):
 
@@ -408,7 +742,6 @@ class addTitleDialogClass(QDialog):
         self.addUi.todayCheck.clicked.connect(lambda: self.addUi.dateEdit.setEnabled(False))
         # self.addUi.selectDateCheck.clicked.connect(lambda: self.addUi.todayCheck.setEnabled(False))
 
-
     def addButtonCMD(self):
 
         self.getData()
@@ -425,7 +758,7 @@ class addTitleDialogClass(QDialog):
         t = time.strftime("%Y/%m/%d :: %H:%M", time.gmtime(time.time()))
 
         if self.addUi.tvShowCheck.isChecked():
-            title = self.addUi.tvShowTitleEntry.text()
+            title = self.addUi.tvShowTitleEntry.text().title()
             se = self.addUi.seasonSpin.text()
             ep = self.addUi.episodeSpin.text()
             date = t
@@ -436,7 +769,7 @@ class addTitleDialogClass(QDialog):
 
         else:
 
-            title = self.addUi.movieTitle.text()
+            title = self.addUi.movieTitle.text().title()
             if self.addUi.todayCheck.isChecked():
                 date = t
             elif self.addUi.selectDateCheck.isChecked():
@@ -456,10 +789,6 @@ class websitesEditDialogClass(QDialog):
         super().__init__()
         self.multiDirUi = websitesEditDialog.Ui_Dialog()
         self.multiDirUi.setupUi(self)
-
-        self.download_sites_Dict = {}
-        self.watch_sites_Dict = {}
-
         
         self.multiDirUi.saveButtonDir.clicked.connect(self.saveCMD)
         self.multiDirUi.helpButtonDir.clicked.connect(self.helpCMD)
@@ -469,9 +798,13 @@ class websitesEditDialogClass(QDialog):
         self.multiDirUi.watchSiteCheck.clicked.connect(self.populateTable)
         self.multiDirUi.removeButton.clicked.connect(self.removeItem)
 
+        self.download_sites_Dict = {}
+        self.watch_sites_Dict = {}
+        self.return_code = 1
+
+        # Set Up Richt Click Functionality
         self.multiDirUi.websitesTableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.multiDirUi.websitesTableWidget.customContextMenuRequested.connect(self.on_customContextMenuRequested)
-
 
         self.populateTable()
 
@@ -479,21 +812,31 @@ class websitesEditDialogClass(QDialog):
         print("save")
 
         listWidget = self.multiDirUi.websitesTableWidget
-        # print(listWidget.rowCount())
         nameList =  [str(listWidget.item(i, 0).text()) for i in range(listWidget.rowCount())]
-        linkList =  [str(listWidget.item(i, 1).text()) for i in range(listWidget.rowCount())]
+        linkList =  [str(listWidget.item(ii, 1).text()) for ii in range(listWidget.rowCount())]
+
+       
 
         if self.multiDirUi.watchSiteCheck.isChecked():
-            for i in range(listWidget.rowCount()):
-                self.watch_sites_Dict[nameList[i]] = [linkList[i]]
+            self.watch_sites_Dict = {}
+
+            for j in range(listWidget.rowCount()):
+                self.watch_sites_Dict[nameList[j]] = [linkList[j]]
+                # print("inside watch")
+                # print(f"nameList = {nameList} , linkList = {linkList}")
 
         elif self.multiDirUi.downloadSiteCheck.isChecked():
-            for i in range(listWidget.rowCount()):
-                self.download_sites_Dict[nameList[i]] = [linkList[i]]
+            self.download_sites_Dict = {}
+
+            for jj in range(listWidget.rowCount()):
+                self.download_sites_Dict[nameList[jj]] = [linkList[jj]]
+                # print("insude download")
+                # print(f"nameList = {nameList} , linkList = {linkList}")
 
         # print(f"watch dict = {self.watch_sites_Dict}, download dict = {self.download_sites_Dict}")
         # print(f"nameList = {nameList} , linkList = {linkList}")
-            
+        
+        self.return_code = 0
         self.close()
 
     def helpCMD(self):
@@ -512,7 +855,12 @@ class websitesEditDialogClass(QDialog):
 
     def clearCMD(self):
 
-        self.multiDirUi.websitesTableWidget.clear()
+        rows = self.multiDirUi.websitesTableWidget.rowCount() + 1
+        for row in range(rows):
+            print(f"remove row {row}, of {rows} rows")
+            self.multiDirUi.websitesTableWidget.removeRow(0)
+        
+        self.multiDirUi.websitesTableWidget.update()
 
     def run(self):
 
@@ -544,9 +892,8 @@ class websitesEditDialogClass(QDialog):
         return data
 
     def populateTable(self):
-
-        DIR = os.getcwd()
-        with open(f"{DIR}\\v2.0\\utils\\data_base.json") as data_baseFo:
+        
+        with open(data_base_path) as data_baseFo:
             data_base = json.load(data_baseFo)
             self.multiDirUi.websitesTableWidget.setRowCount(0)
 
@@ -565,59 +912,154 @@ class websitesEditDialogClass(QDialog):
 
     def removeItem(self):
 
-        curItem = self.multiDirUi.websitesTableWidget.currentItem()
+        curItem = self.multiDirUi.websitesTableWidget.currentRow()
+        print(curItem)
+        self.multiDirUi.websitesTableWidget.removeRow(curItem)
+        self.multiDirUi.websitesTableWidget.update()
 
-        print(f"remove {curItem.text()}")
+        print(f"remove {curItem}")
+
+    def returnCode(self):
+
+        return self.return_code
 
     @pyqtSlot(QPoint)
     def on_customContextMenuRequested(self, pos):
-
+        
+        table = self.multiDirUi.websitesTableWidget
         top_menu = QMenu(self)
 
         menu = top_menu.addMenu("Menu")
-        config = menu.addMenu("Configuration ...")
 
-        _load = config.addAction("&Load ...")
-        _save = config.addAction("&Save ...")
-
-        config.addSeparator()
-
-        config1 = config.addAction("Config1")
-        config2 = config.addAction("Config2")
-        config3 = config.addAction("Config3")
-
+        remove = menu.addAction("Remove")
+        edit = menu.addAction("Edit")
+        menu.addSeparator()
+        default = menu.addAction("Make Default")
+        
         action = menu.exec_(QtGui.QCursor.pos())
 
-        if action == _load:
+        if action == remove:
+            self.removeItem()
+
+        elif action == edit:
             # do this
             pass
-        elif action == _save:
-            # do this
-            pass
-        elif action == config1:
-            # do this
-            pass
-        elif action == config2:
-            # do this
-            pass
-        elif action == config3:
-            # do this
-            pass
+        elif action == default:
+            if self.multiDirUi.downloadSiteCheck.isChecked():
+                siteName = table.item(table.currentIndex().row(), 0).text()
+                print(f"make {siteName} the default download website")
+
+                data_base = getDataBase()
+                detailDict = data_base["details"]
+                detailDict["download"] = siteName
+                data_base["details"] = detailDict
+
+                writeDataBase(data_base)
+            elif self.multiDirUi.watchSiteCheck.isChecked():
+
+                siteName = table.item(table.currentIndex().row(), 0).text()
+                print(f"make {siteName} the default watch website")
+
+                data_base = getDataBase()
+                detailDict = data_base["details"]
+                detailDict["watch"] = siteName
+                data_base["details"] = detailDict
+
+                writeDataBase(data_base)
+
 
 def getDataBase():
     global data_base
 
-    DIR = os.getcwd()
-    with open(f"{DIR}\\v2.0\\utils\\data_base.json") as data_baseFo:
+    with open(data_base_path) as data_baseFo:
         data_base = json.load(data_baseFo)
 
     return data_base
         
 def writeDataBase(database_dict):
 
-    DIR = os.getcwd()
-    with open(f"{DIR}\\v2.0\\utils\\data_base.json", "w") as data_baseFo:
-        json.dump(database_dict, data_baseFo, indent=2)
+    with open(data_base_path, "w") as data_baseFo:
+        json.dump(database_dict, data_baseFo, indent=2, separators=(',', ':  '))
+
+def writeTableToDataBase(table, datakey):
+    """ Write the existent table items to the database under
+        <datakey> key in the dasired dictionary"""
+
+    data_base = getDataBase()
+    datakey_Dict = data_base[datakey]
+    data_Dict = {}
+    listWidget = table
+    t = time.strftime("%Y/%m/%d :: %H:%M", time.gmtime(time.time()))
+    # QTableView
+
+    for i in range(listWidget.rowCount()):
+        title = str(listWidget.item(i, 0).text())
+        previousValues = datakey_Dict[title]
+        pv = previousValues
+
+        values = []
+        for j in range(listWidget.columnCount()):
+            value = str(listWidget.item(i, j+1).text())
+            values.append(value)
+
+        data_Dict[title] = [title, pv[1], values[0], values[1], t]
+        
+        data_base[datakey] = data_Dict
+
+    # writeDataBase(data_base)
+
+def updateSearchList():
+
+    data_base = getDataBase()
+
+    currently_watchingDict = data_base["currently_watching"]
+    complete_tv_showsDict = data_base["complete_tv_shows"]
+    shows_on_breakDict = data_base["shows_on_break"]
+    wish_listDict = data_base["wish_list"]
+    recycle_binDict = data_base["recycle_bin"]
+    search_dictList = data_base["search_dict"]
+
+    for _dict in (currently_watchingDict, complete_tv_showsDict, shows_on_breakDict, wish_listDict, recycle_binDict):
+        for k, _ in _dict.items():
+            if k not in search_dictList:
+                search_dictList.append(k)
+    
+    data_base["search_dict"] = sorted(search_dictList)
+
+    writeDataBase(data_base)
+
+    print("done.")
+        
+def setUpPaths():
+
+    global data_base_path, template_path
+
+    ## set up data base path
+    try:
+        x = os.path.abspath("utils\\data_base.json")
+        with open(x) as p:
+            pass
+    except FileNotFoundError:
+        x = os.path.abspath("v2.0\\utils\\data_base.json")
+        with open(x) as p:
+            pass
+
+    data_base_path = x
+
+    ## set up template path
+    try:
+        x = os.path.abspath("utils\\template.json")
+        with open(x) as p:
+            pass
+    except FileNotFoundError:
+        x = os.path.abspath("v2.0\\utils\\template.json")
+        with open(x) as p:
+            pass
+
+    template_path = x
+
+
+
 
 
 

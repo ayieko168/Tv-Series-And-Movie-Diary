@@ -36,7 +36,7 @@
      <number>1</number>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="label_4">
@@ -65,7 +65,10 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked</set>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
@@ -91,10 +94,16 @@
        <property name="text">
         <string>Se</string>
        </property>
+       <property name="textAlignment">
+        <set>AlignCenter</set>
+       </property>
       </column>
       <column>
        <property name="text">
         <string>Ep</string>
+       </property>
+       <property name="textAlignment">
+        <set>AlignCenter</set>
        </property>
       </column>
      </widget>
@@ -116,7 +125,7 @@
        </size>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked</set>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
@@ -210,7 +219,7 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked</set>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
@@ -276,7 +285,7 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked</set>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
@@ -343,7 +352,7 @@
        <enum>Qt::CustomContextMenu</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::DoubleClicked</set>
       </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::SingleSelection</enum>
@@ -389,14 +398,24 @@
      <widget class="QPushButton" name="pushButton_3">
       <property name="geometry">
        <rect>
-        <x>74</x>
-        <y>550</y>
+        <x>90</x>
+        <y>560</y>
         <width>171</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
        <string>View More info On Your Browser</string>
+      </property>
+     </widget>
+     <widget class="QTextBrowser" name="resutlTextBrowser">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>265</width>
+        <height>537</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -534,7 +553,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="searchSourceLocalOnline">
+       <widget class="QRadioButton" name="searchSourceOnlineCheck">
         <property name="text">
          <string>Online</string>
         </property>
@@ -545,14 +564,17 @@
     <widget class="QLabel" name="searchStatusLabel">
      <property name="geometry">
       <rect>
-       <x>130</x>
+       <x>120</x>
        <y>100</y>
-       <width>101</width>
-       <height>16</height>
+       <width>131</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -596,6 +618,9 @@
     <addaction name="actionPush_My_Data"/>
     <addaction name="actionPull_My_Data"/>
     <addaction name="separator"/>
+    <addaction name="actionBuck_Up_My_Data"/>
+    <addaction name="actionRecover_My_Data_from_A_Buckup"/>
+    <addaction name="separator"/>
     <addaction name="menuWatch_Sites"/>
     <addaction name="menuDownload_Sites"/>
     <addaction name="actionEdit_Sites"/>
@@ -617,6 +642,7 @@
     <addaction name="separator"/>
     <addaction name="actionOnline_Thumbnails"/>
     <addaction name="actionClear_All_Data"/>
+    <addaction name="actionUpdate_Local_Search_List"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -645,6 +671,8 @@
     </property>
     <addaction name="actionVideo_Tutorials"/>
     <addaction name="actionAbout"/>
+    <addaction name="separator"/>
+    <addaction name="actionUpdate"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -834,6 +862,26 @@
     <string>Alt+6</string>
    </property>
   </action>
+  <action name="actionBuck_Up_My_Data">
+   <property name="text">
+    <string>Buck Up My Data</string>
+   </property>
+  </action>
+  <action name="actionRecover_My_Data_from_A_Buckup">
+   <property name="text">
+    <string>Load Data from A Buckup</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Local_Search_List">
+   <property name="text">
+    <string>Update Local Search List</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Update</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>currentlyWatchingTable</tabstop>
@@ -845,7 +893,7 @@
   <tabstop>searchTitleEntry</tabstop>
   <tabstop>searchButton</tabstop>
   <tabstop>searchSourceLocalCheck</tabstop>
-  <tabstop>searchSourceLocalOnline</tabstop>
+  <tabstop>searchSourceOnlineCheck</tabstop>
   <tabstop>addNewEntryButton</tabstop>
   <tabstop>previewBoxGraphicsView</tabstop>
  </tabstops>

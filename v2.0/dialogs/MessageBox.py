@@ -1,6 +1,9 @@
 from PyQt4.QtGui import *
 
-def showMessage():
+def showMessage(_type="INFO", title="INFORMATION", message="", detailed="", ):
+
+    def msgbtn(i):
+        return i.text()
 
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Information)
@@ -17,6 +20,74 @@ def showMessage():
 
     return textResalt
 
-def msgbtn(i):
-#    print ("Button pressed is:", i.text())
-   return i.text()
+def showInfoMessage(message=""):
+
+    def msgbtn(i):
+        global textResalt
+        textResalt = i.text().replace("&", "")
+
+    msg = QMessageBox()
+
+    msg.setIcon(QMessageBox.Information)
+    msg.setText(message)
+    msg.setWindowTitle("INFORMATION")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.buttonClicked.connect(msgbtn)
+
+    retval = msg.exec_()
+
+    return textResalt
+
+def showWarningMessage(message=""):
+
+    def msgbtn(i):
+        global textResalt
+        textResalt = i.text().replace("&", "")
+
+    msg = QMessageBox()
+
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText(message)
+    msg.setWindowTitle("WARNING")
+    msg.setStandardButtons(QMessageBox.Yes  | QMessageBox.No)
+    msg.buttonClicked.connect(msgbtn)
+
+    retval = msg.exec_()
+
+    return textResalt
+
+def showErrorMessage(message="", details=""):
+
+    def msgbtn(i):
+        global textResalt
+        textResalt = i.text().replace("&", "")
+
+    msg = QMessageBox()
+
+    if details != "":
+        msg.setDetailedText(details)
+    msg.setIcon(QMessageBox.Critical)
+    msg.setText(message)
+    msg.setWindowTitle("ERROR")
+    msg.setStandardButtons(QMessageBox.Ok)
+    msg.buttonClicked.connect(msgbtn)
+
+    retval = msg.exec_()
+
+    return textResalt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

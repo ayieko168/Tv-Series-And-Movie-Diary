@@ -11,12 +11,38 @@
 
     "recycle_bin" : {},
 
-    "details" : {},
+    "details" : {
+      "use":  "user",
+      "pas":  [],
+      "occupied":  "False",
+      "watch":  "Putlocker",
+      "download":  "The Pirates Bay"
+    },
 
-    "watch_sites" : {},
+    "watch_sites" : {
+        "Putlocker":  [
+          "https://www.putlockers.cr/"
+        ],
+        "Anime Lab":  [
+          "https://www.animelab.com/home"
+        ]
+      },
 
-    "download_sites" : {},
+    "download_sites" : {
+        "The Pirates Bay":  [
+          "https://xn--thepratebay-fcb.se/"
+        ],
+        "YIFY":  [
+          "https://yts.lt/"
+        ],
+        "EZTV":  [
+          "https://eztv.io/"
+        ],
+        "RARBG":  [
+          "https://rargb.to/tv/"
+        ]
+      },
 
-    "search_dict" : {}
+    "search_dict" : []
 
 }
