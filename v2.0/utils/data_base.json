@@ -991,8 +991,14 @@
   },
   "recycle_bin":  {},
   "details":  {
-    "use":  "user",
-    "pas":  [],
+    "use":  "fake",
+    "pas":  [
+      513659438,
+      513659443,
+      513659442,
+      513659438,
+      513659443
+    ],
     "occupied":  "False",
     "watch":  "Putlocker",
     "download":  "The Pirates Bay"

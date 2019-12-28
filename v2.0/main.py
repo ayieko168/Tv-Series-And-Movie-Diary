@@ -8,7 +8,7 @@ from dialogs import addNewTitleDialog
 from dialogs import websitesEditDialog
 from utils import checker, search_function
 import webbrowser
-import json, os, time, shutil
+import json, os, time, shutil, requests
 from github import Github
 
 data_base = {}
@@ -108,9 +108,19 @@ class App(QMainWindow):
                 print("sign in to github")
                 self.signInGithub(user, _pass)
 
+                ## Store
+                data_base = getDataBase()
+
+                data_base["details"]["use"] = user
+                data_base["details"]["pas"] = checker.encoder(_pass)
+                data_base["details"]["occupied"] = "True"
+
+                writeDataBase(data_base)
+
+
         elif selection == "Logout option":
             
-            showMessage()
+            pass
 
         elif selection == "Create Account":
 
@@ -163,17 +173,17 @@ class App(QMainWindow):
         # INIT
         selection = q.text()
         self.selectionLogic(selection, self.ui.menuDownload_Sites)
+        self.selected_download_Site_Link = getDataBase()["download_sites"][selection][0]
 
-        self.selected_download_Site = self.download_sites_Dict[selection][0]
-        f"selected_watch_Site set to  = {selection}, link = {self.selected_download_Site_Link}"
+        print(f"selected_watch_Site set to  = {selection}, link = {self.selected_download_Site_Link}")
         
     def menuWatch_SitesCMD(self, q):
         
         # INIT
         selection = q.text()
         self.selectionLogic(selection, self.ui.menuWatch_Sites)
+        self.selected_watch_Site_Link = getDataBase()["watch_sites"][selection][0]
 
-        self.selected_watch_Site_Link = self.watch_sites_Dict[selection][0]
         print(f"selected_watch_Site set to  = {selection}, link = {self.selected_watch_Site_Link}")
         
     def menuFileCMD(self, q):
@@ -427,6 +437,8 @@ class App(QMainWindow):
     def signInGithub(self, user, passw):
 
         print(f"sign in using {user}, {passw}")
+
+        print(GithubUtilities.validate_user(user, passw))
 
         g = Github(user, passw)
 
@@ -843,6 +855,7 @@ class websitesEditDialogClass(QDialog):
 
         print("open help")
 
+
     def addCMD(self):
 
         print("add")
@@ -968,7 +981,24 @@ class websitesEditDialogClass(QDialog):
                 writeDataBase(data_base)
 
 
+class GithubUtilities:
+
+    def __init__(self):
+
+        pass
+
+    def validate_user(self, user, pas):
+
+        r = requests.get('https://api.github.com', auth=(user, pas))
+        return_status = r.status_code
+
+        if return_status == requests.codes.ok:
+            return "Valid User"
+        else:
+            return "Invalid User"
+
 def getDataBase():
+    """Return a dictionary containing the main database"""
     global data_base
 
     with open(data_base_path) as data_baseFo:
