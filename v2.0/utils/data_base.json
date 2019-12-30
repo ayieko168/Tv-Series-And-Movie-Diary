@@ -1035,6 +1035,9 @@
     ],
     "YIFY":  [
       "https://yts.am/browse-movies/{}/all/all/0/latest"
+    ],
+    "Anime Tosho":  [
+      "https://animetosho.org/search?q={}"
     ]
   },
   "search_dict":  [

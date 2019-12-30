@@ -1,5 +1,5 @@
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from MainDesign import *
 import dialogs.MessageBox as messagebox
 from dialogs import cridentialsDialog
@@ -49,15 +49,15 @@ class App(QMainWindow):
         updateSearchList()
 
         # Set Up Richt Click Functionality
-        self.ui.currentlyWatchingTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.currentlyWatchingTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.currentlyWatchingTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
-        self.ui.completedTvShowsTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.completedTvShowsTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.completedTvShowsTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
-        self.ui.onBreakTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.onBreakTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.onBreakTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
-        self.ui.wishListTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.wishListTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.wishListTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
-        self.ui.seenMoviesTable.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.seenMoviesTable.setContextMenuPolicy(Qt.CustomContextMenu)
         self.ui.seenMoviesTable.customContextMenuRequested.connect(self.on_customContextMenuRequested)
 
     def searchTitleFunction(self):
@@ -339,7 +339,7 @@ class App(QMainWindow):
         pos = 0
         for value in values:
             # print(f"add {value} at", pos)
-            table.setItem(rowPosition, pos, QtGui.QTableWidgetItem(str(value)))
+            table.setItem(rowPosition, pos, QTableWidgetItem(str(value)))
             pos+=1
 
     def addNewEntryButtonCMD(self):
@@ -366,30 +366,30 @@ class App(QMainWindow):
         """set the basic pproperties of the tables"""
 
         header = self.ui.currentlyWatchingTable.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(2, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
 
         header = self.ui.completedTvShowsTable.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(2, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(3, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Stretch)
 
         header = self.ui.onBreakTable.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(2, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(3, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
 
         header = self.ui.wishListTable.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
-        header.setResizeMode(2, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
 
         header = self.ui.seenMoviesTable.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
 
         self.ui.stackedWidget.setCurrentIndex(0)
 
@@ -815,7 +815,7 @@ class websitesEditDialogClass(QDialog):
         self.return_code = 1
 
         # Set Up Richt Click Functionality
-        self.multiDirUi.websitesTableWidget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.multiDirUi.websitesTableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.multiDirUi.websitesTableWidget.customContextMenuRequested.connect(self.on_customContextMenuRequested)
 
         self.populateTable()
@@ -887,13 +887,13 @@ class websitesEditDialogClass(QDialog):
         table.insertRow(rowPosition)
 
         header = table.horizontalHeader()
-        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
-        header.setResizeMode(1, QtGui.QHeaderView.Stretch)
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
         
         pos = 0
         for value in values:
             # print(f"add {value} at", pos)
-            table.setItem(rowPosition, pos, QtGui.QTableWidgetItem(str(value)))
+            table.setItem(rowPosition, pos, QTableWidgetItem(str(value)))
             pos+=1
 
     def getData(self):

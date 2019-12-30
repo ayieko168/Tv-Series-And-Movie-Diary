@@ -1,4 +1,5 @@
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 def showMessage(_type="INFO", title="INFORMATION", message="", detailed="", ):
 
