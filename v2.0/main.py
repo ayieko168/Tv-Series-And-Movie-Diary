@@ -1,5 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from PyQt5 import QtGui
 from MainDesign import *
 import dialogs.MessageBox as messagebox
 from dialogs import cridentialsDialog
@@ -15,6 +16,7 @@ data_base = {}
 data_base_path = ""
 template_path = ""
 values_format = "title, type, season, episode, datecomplete, datebrake, dateadded, dateseen"
+
 
 class App(QMainWindow):
 
@@ -101,21 +103,27 @@ class App(QMainWindow):
             crid.run()
             user, _pass, ocup = crid.getCridentials()
 
-        
             if (_pass != "") and (user != ""):
 
+                ## test credentials
+                print("test credentials")
+                git_utils = GithubUtilities()
+                validity = git_utils.validate_user(user, _pass)
+
                 ## Sign In to Github..
-                print("sign in to github")
-                self.signInGithub(user, _pass)
+                if validity == "Valid User":
+                    print("sign in to github")
+                    git_utils.sign_in(user, _pass)
+                else:
+                    print("Cant sign in to github because of bad credentials or bad connections")
 
-                ## Store
-                data_base = getDataBase()
-
-                data_base["details"]["use"] = user
-                data_base["details"]["pas"] = checker.encoder(_pass)
-                data_base["details"]["occupied"] = "True"
-
-                writeDataBase(data_base)
+                # ## Store
+                # data_base = getDataBase()
+                # data_base["details"]["use"] = user
+                # data_base["details"]["pas"] = checker.encoder(_pass)
+                # data_base["details"]["occupied"] = "True"
+                #
+                # writeDataBase(data_base)
 
 
         elif selection == "Logout option":
@@ -434,14 +442,6 @@ class App(QMainWindow):
             if actn.text() != selection:
                 actn.setChecked(False)
 
-    def signInGithub(self, user, passw):
-
-        print(f"sign in using {user}, {passw}")
-
-        print(GithubUtilities.validate_user(user, passw))
-
-        g = Github(user, passw)
-
     @pyqtSlot(QPoint)
     def on_customContextMenuRequested(self, pos):
 
@@ -647,16 +647,6 @@ class App(QMainWindow):
     # def update
 
 
-
-
-
-
-
-
-
-
-
-
 class LoginDialogClass(QDialog):
 
     def __init__(self):
@@ -681,13 +671,14 @@ class LoginDialogClass(QDialog):
 
         print("show pass")
         if self.crUi.passwordEntryCri.echoMode():  # if normal...
-            self.crUi.passwordEntryCri.setEchoMode(QtGui.QLineEdit.Normal)
+            self.crUi.passwordEntryCri.setEchoMode(QLineEdit.Normal)
             self.crUi.showButtonCri.setText("hide")
         else:
-            self.crUi.passwordEntryCri.setEchoMode(QtGui.QLineEdit.Password)
+            self.crUi.passwordEntryCri.setEchoMode(QLineEdit.Password)
             self.crUi.showButtonCri.setText("show")
 
     def getCridentials(self):
+        """return a list containing the current user, pass and occupation state obtained from the GetCredentials Dialog"""
 
         credentials = []
 
@@ -708,10 +699,13 @@ class LoginDialogClass(QDialog):
 
     def doneCMD(self):
 
+        print("done")
+
         self.getCridentials()
         if (self.crUi.userNameEntryCri.text() == "") or (self.crUi.passwordEntryCri.text() == ""):
-            showMessage()
+            print("Plese enter some credentials... one of the fields is empty")
         else:
+            self.getCridentials()
             self.close()
 
 
@@ -987,6 +981,10 @@ class GithubUtilities:
 
         pass
 
+    def sign_in(self, user, pas):
+
+        g = Github("user", "password")
+
     def validate_user(self, user, pas):
 
         r = requests.get('https://api.github.com', auth=(user, pas))
@@ -997,6 +995,7 @@ class GithubUtilities:
         else:
             return "Invalid User"
 
+
 def getDataBase():
     """Return a dictionary containing the main database"""
     global data_base
@@ -1005,11 +1004,13 @@ def getDataBase():
         data_base = json.load(data_baseFo)
 
     return data_base
-        
+
+
 def writeDataBase(database_dict):
 
     with open(data_base_path, "w") as data_baseFo:
         json.dump(database_dict, data_baseFo, indent=2, separators=(',', ':  '))
+
 
 def writeTableToDataBase(table, datakey):
     """ Write the existent table items to the database under
@@ -1038,6 +1039,7 @@ def writeTableToDataBase(table, datakey):
 
     # writeDataBase(data_base)
 
+
 def updateSearchList():
 
     data_base = getDataBase()
@@ -1059,7 +1061,8 @@ def updateSearchList():
     writeDataBase(data_base)
 
     print("done.")
-        
+
+
 def setUpPaths():
 
     global data_base_path, template_path
