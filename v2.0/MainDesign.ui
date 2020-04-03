@@ -79,11 +79,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>19</number>
-      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>15</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
       </attribute>
       <column>
        <property name="text">
@@ -151,11 +151,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>19</number>
-      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>15</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
       </attribute>
       <column>
        <property name="text">
@@ -230,11 +230,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>19</number>
-      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>15</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
       </attribute>
       <column>
        <property name="text">
@@ -302,11 +302,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>19</number>
-      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>15</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
       </attribute>
       <column>
        <property name="text">
@@ -363,11 +363,11 @@
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>19</number>
-      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>15</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>19</number>
       </attribute>
       <column>
        <property name="text">
@@ -598,7 +598,7 @@
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
