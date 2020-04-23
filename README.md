@@ -14,6 +14,9 @@ But here is a list of the needed packages:
 
 3.requests
 
+#### Tutorials
+I have creaded a youtube tutorial series [here](https://www.youtube.com/watch?v=2lI5CvZjBPI&list=PLYBkj59Lkv1rtz6lrjRHIizK3kTTH41vB). Check it out for a guide on how to use it.
+
 # SCREENSHOTS
 Screenshot of the Main Window:
 
